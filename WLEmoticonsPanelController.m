@@ -51,7 +51,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLEmoticonsPanelController);
 	}
 	
 	// Load Nib file and load all emoticons in
-	if ([NSBundle loadNibNamed:kEmoticonPanelNibFilename owner:self]) {
+	if ([[NSBundle mainBundle] loadNibNamed:kEmoticonPanelNibFilename
+                                      owner:self
+                            topLevelObjects:nil]) {
 		[self loadEmoticons];
 	}
 }

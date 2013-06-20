@@ -159,7 +159,7 @@ const cell WLWhiteSpaceCell = {WLWhitespaceCharacter, 0};
 		emptyCount = 0;
 	}
 	
-	convertToUTF8(buffer, bufferLength, [[[terminal connection] site] encoding]);
+	convertToUTF8(buffer, bufferLength, terminal.connection.site.encoding);
 	NSData *returnValue = [NSData dataWithBytes:buffer length:bufferLength * sizeof(cell)];
 	free(buffer);
 	return returnValue;

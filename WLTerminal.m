@@ -28,14 +28,13 @@
 @synthesize bbsState = _bbsState;
 @synthesize connection = _connection;
 
-- (id)init {
+- (instancetype)init {
 	if (self = [super init]) {
-        _maxRow = [[WLGlobalConfig sharedInstance] row];
-		_maxColumn = [[WLGlobalConfig sharedInstance] column];
+        _maxRow = [WLGlobalConfig sharedInstance].row;
+		_maxColumn = [WLGlobalConfig sharedInstance].column;
 		_grid = (cell **)malloc(sizeof(cell *) * _maxRow);
 		_dirty = (BOOL **)malloc(sizeof(BOOL *) * _maxRow);
-        int i;
-        for (i = 0; i < _maxRow; i++) {
+        for (int i = 0; i < _maxRow; i++) {
 			// NOTE: in case _cursorX will exceed _column size (at the border of the
 			//		 screen), we allocate one more unit for this array
 			_grid[i] = (cell *)malloc(sizeof(cell) * (_maxColumn + 1));
@@ -43,7 +42,7 @@
 		}
 		_textBuf = (unichar *)malloc(sizeof(unichar) * (_maxRow * _maxColumn + 1));
 		
-		_observers = [[NSMutableSet alloc] init];
+		_observers = [NSMutableSet set];
 		
         [self clearAll];
 	}
@@ -199,10 +198,10 @@
 // Different from the method 'stringAtIndex:length'!!
 - (NSAttributedString *)attributedStringAtIndex:(NSUInteger)location 
 										 length:(NSUInteger)length {
-	NSFont *englishFont = [NSFont fontWithName:[[WLGlobalConfig sharedInstance] englishFontName] 
-										  size:[[WLGlobalConfig sharedInstance] englishFontSize]];
-	NSFont *chineseFont = [NSFont fontWithName:[[WLGlobalConfig sharedInstance] chineseFontName]
-										  size:[[WLGlobalConfig sharedInstance] chineseFontSize]];
+	NSFont *englishFont = [NSFont fontWithName:[WLGlobalConfig sharedInstance].englishFontName
+										  size:[WLGlobalConfig sharedInstance].englishFontSize];
+	NSFont *chineseFont = [NSFont fontWithName:[WLGlobalConfig sharedInstance].chineseFontName
+										  size:[WLGlobalConfig sharedInstance].chineseFontSize];
 	// Get twice length and then trim it to 'length' characters
 	NSString *s = [[self stringAtIndex:location length:length*2] substringToIndex:length];
 	
@@ -210,16 +209,16 @@
 	// Set all characters with english font at first
 	[attrStr addAttribute:NSFontAttributeName 
 					value:englishFont
-					range:NSMakeRange(0, [attrStr length])];
+					range:NSMakeRange(0, attrStr.length)];
 	// Fix the non-English characters' font
-	[attrStr fixFontAttributeInRange:NSMakeRange(0, [attrStr length])];
+	[attrStr fixFontAttributeInRange:NSMakeRange(0, attrStr.length)];
 	
 	// Now replace all the fixed characters' font to be Chinese Font
 	NSRange limitRange;
 	NSRange effectiveRange;
 	id attributeValue;
 	
-	limitRange = NSMakeRange(0, [attrStr length]);
+	limitRange = NSMakeRange(0, attrStr.length);
 	
 	while (limitRange.length > 0) {
 		attributeValue = [attrStr attribute:NSFontAttributeName
@@ -255,14 +254,13 @@
 - (void)updateDoubleByteStateForRow:(int)r {
 	cell *currRow = _grid[r];
 	int db = 0;
-	BOOL isDirty = NO;
 	for (int c = 0; c < _maxColumn; c++) {
 		if (db == 0 || db == 2) {
 			if (currRow[c].byte > 0x7F) {
 				db = 1;
 				// Fix double bytes' dirty property ot be consistent
 				if (c < _maxColumn) {
-					isDirty = _dirty[r][c] || _dirty[r][c+1];
+					BOOL isDirty = _dirty[r][c] || _dirty[r][c+1];
 					_dirty[r][c] = isDirty;
 					_dirty[r][c+1] = isDirty;
 				}
@@ -285,8 +283,7 @@ static NSString *extractString(NSString *row, NSString *start, NSString *end) {
 inline static BOOL hasAnyString(NSString *row, NSArray *array) {
 	if (row == nil)
 		return NO;
-    NSString *s;
-    for (s in array) {
+    for (NSString *s in array) {
         if ([row rangeOfString:s].length > 0)
             return YES;
     }
@@ -366,11 +363,11 @@ inline static BOOL hasAnyString(NSString *row, NSArray *array) {
 # pragma mark -
 # pragma mark Accessor
 - (WLEncoding)encoding {
-    return [[[self connection] site] encoding];
+    return self.connection.site.encoding;
 }
 
 - (void)setEncoding:(WLEncoding)encoding {
-    [[[self connection] site] setEncoding:encoding];
+    self.connection.site.encoding = encoding;
 }
 
 - (void)setConnection:(WLConnection *)value {

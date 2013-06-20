@@ -202,7 +202,7 @@ ASCII_CODE asciiCodeFamily(unsigned char c) {
 
 static unsigned short gEmptyAttr;
 
-- (id)init {
+- (instancetype)init {
 	if (self = [super init]) {
 		_hasNewMessage = NO;
         _savedCursorX = _savedCursorY = -1;
@@ -216,8 +216,7 @@ static unsigned short gEmptyAttr;
         _modeIRM = NO;
         _emustd = VT102;
 		_grid = (cell **) malloc(sizeof(cell *) * _row);
-        int i;
-        for (i = 0; i < _row; i++) {
+        for (int i = 0; i < _row; i++) {
 			// NOTE: in case _cursorX will exceed _column size (at the border of the
 			//		 screen), we allocate one more unit for this array
 			_grid[i] = (cell *) malloc(sizeof(cell) * (_column + 1));
@@ -227,7 +226,7 @@ static unsigned short gEmptyAttr;
 	return self;
 }
 
-- (id)initWithConnection:(WLConnection *)connection {
+- (instancetype)initWithConnection:(WLConnection *)connection {
 	if (self == [self init]) {
 		_connection = connection;
 	}
@@ -254,16 +253,13 @@ static unsigned short gEmptyAttr;
 	   connection:(id)connection {
     @autoreleasepool {
 	
-	int i, x;
-	unsigned char c;
-	
 	if ([_terminal bbsType] == WLFirebird) {
 		_hasNewMessage = NO;
 	}
 	
 	//    NSLog(@"length: %d", len);
-	for (i = 0; i < len; i++) {
-		c = ((const char *)bytes)[i];
+	for (int i = 0; i < len; i++) {
+		unsigned char c = ((const char *)bytes)[i];
 		//        if (c == 0x00) continue;
         
 		switch (_state)
@@ -297,7 +293,7 @@ static unsigned short gEmptyAttr;
 						cell *emptyLine = _grid[_scrollBeginRow];
 						[self clearRow:_scrollBeginRow];
 						
-						for (x = _scrollBeginRow; x < _scrollEndRow; x++) 
+						for (int x = _scrollBeginRow; x < _scrollEndRow; x++)
 							_grid[x] = _grid[x + 1];
 						_grid[_scrollEndRow] = emptyLine;
 						[_terminal setAllDirty];
@@ -359,7 +355,7 @@ static unsigned short gEmptyAttr;
 						cell *emptyLine = _grid[_scrollEndRow];
 						[self clearRow:_scrollEndRow];
 						
-						for (x = _scrollEndRow; x > _scrollBeginRow; x--) 
+						for (int x = _scrollEndRow; x > _scrollBeginRow; x--)
 							_grid[x] = _grid[x - 1];
 						_grid[_scrollBeginRow] = emptyLine;
 						[_terminal setAllDirty];
@@ -375,7 +371,7 @@ static unsigned short gEmptyAttr;
 						cell *emptyLine = _grid[_scrollBeginRow];
 						[self clearRow:_scrollBeginRow];
 						
-						for (x = _scrollBeginRow; x < _scrollEndRow; x++) 
+						for (int x = _scrollBeginRow; x < _scrollEndRow; x++)
 							_grid[x] = _grid[x + 1];
 						_grid[_scrollEndRow] = emptyLine;
 						[_terminal setAllDirty];
@@ -427,7 +423,7 @@ static unsigned short gEmptyAttr;
 						cell *emptyLine = _grid[_scrollBeginRow];
 						[self clearRow:_scrollBeginRow];
 						
-						for (x = _scrollBeginRow; x < _scrollEndRow; x++) 
+						for (int x = _scrollBeginRow; x < _scrollEndRow; x++)
 							_grid[x] = _grid[x + 1];
 						_grid[_scrollEndRow] = emptyLine;
 						[_terminal setAllDirty];
@@ -493,7 +489,7 @@ static unsigned short gEmptyAttr;
 						cell *emptyLine = _grid[_scrollBeginRow];
 						[self clearRow:_scrollBeginRow];
 						
-						for (x = _scrollBeginRow; x < _scrollEndRow; x++) 
+						for (int x = _scrollBeginRow; x < _scrollEndRow; x++)
 							_grid[x] = _grid[x + 1];
 						_grid[_scrollEndRow] = emptyLine;
 						[_terminal setAllDirty]; // We might not need to set everything dirty.
@@ -521,7 +517,7 @@ static unsigned short gEmptyAttr;
 						} else {
 							p = 1;
 						}
-						for (x = _column - 1; x > _cursorX + p - 1; x--) {
+						for (int x = _column - 1; x > _cursorX + p - 1; x--) {
 							_grid[_cursorY][x] = _grid[_cursorY][x-p];
 							[_terminal setDirty:YES atRow:_cursorY column:x];
 						}
@@ -970,6 +966,7 @@ static unsigned short gEmptyAttr;
 		// new incoming message
 		if ([_terminal bbsType] == WLMaple && _grid[_row - 1][0].attr.f.bgColor != 9 && _grid[_row - 1][_column - 2].attr.f.bgColor == 9) {
 			// for maple bbs (e.g. ptt)
+			int i;
 			for (i = 2; i < _column && _grid[_row - 1][i].attr.f.bgColor == _grid[_row - 1][i - 1].attr.f.bgColor; ++i); // split callerName and messageString
 			int splitPoint = i++;
 			for (; i < _column && _grid[_row - 1][i].attr.f.bgColor == _grid[_row - 1][i - 1].attr.f.bgColor; ++i); // determine the end of the message
@@ -980,6 +977,7 @@ static unsigned short gEmptyAttr;
 			_hasNewMessage = NO;
 		} else if ([_terminal bbsType] == WLFirebird && _grid[0][0].attr.f.bgColor != 9) {
 			// for firebird bbs (e.g. smth)
+			int i;
 			for (i = 2; i < _row && _grid[i][0].attr.f.bgColor != 9; ++i);	// determine the end of the message
 			NSString *callerName = [_terminal stringAtIndex:0 length:_column];
 			NSString *messageString = [_terminal stringAtIndex:_column length:(i - 1) * _column];
