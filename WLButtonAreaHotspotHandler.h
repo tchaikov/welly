@@ -24,13 +24,13 @@ NSString * const WLButtonNameSwitchSortBoards;
 NSString * const WLButtonNameSwitchBoardsNumber;
 NSString * const WLButtonNameDeleteBoard;
 
-typedef struct {
-	int state;
-	NSString *signature;
-	int signatureLengthOfBytes;
-	NSString *buttonName;
-	NSString *commandSequence;
-} WLButtonDescription;
+@interface WLButtonDesc : NSObject
+@property (assign) int state;
+@property (copy) NSString *signature;
+@property (assign) int signatureLengthOfBytes;
+@property (copy) NSString *buttonName;
+@property (copy) NSString *commandSequence;
+@end
 
 @class WLTerminalView;
 @interface WLButtonAreaHotspotHandler : WLMouseHotspotHandler <WLMouseUpHandler, WLUpdatable> {

@@ -35,7 +35,7 @@
 
 	NSMutableSet *_observers;
 
-    WLConnection *_connection;
+    WLConnection *__weak _connection;
 	
 	BBSState _bbsState;
 	
@@ -46,7 +46,7 @@
 @property unsigned int cursorColumn;
 @property unsigned int cursorRow;
 @property cell **grid;
-@property (assign, setter=setConnection:, nonatomic) WLConnection *connection;
+@property (weak, setter=setConnection:, nonatomic) WLConnection *connection;
 @property (assign, readwrite) WLBBSType bbsType;
 @property (readonly) BBSState bbsState;
 

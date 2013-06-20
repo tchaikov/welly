@@ -2,10 +2,10 @@
  * HIDRemoteControlDevice.h
  * RemoteControlWrapper
  *
- * Created by Martin Kahr on 11.03.06 under a MIT-style license. 
+ * Created by Martin Kahr on 11.03.06 under a MIT-style license.
  * Copyright (c) 2006 martinkahr.com. All rights reserved.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a 
+ * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -15,9 +15,9 @@
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED ‚ÄúAS IS‚Äù, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED â€šÃ„ÃºAS ISâ€šÃ„Ã¹, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -31,18 +31,18 @@
 #import "RemoteControl.h"
 
 /*
-	Base class for HID based remote control devices
+ Base class for HID based remote control devices
  */
 @interface HIDRemoteControlDevice : RemoteControl {
 	IOHIDDeviceInterface** hidDeviceInterface;
 	IOHIDQueueInterface**  queue;
 	NSMutableArray*		   allCookies;
 	NSMutableDictionary*   cookieToButtonMapping;
+	
 	CFRunLoopSourceRef	   eventSource;
 	
-	BOOL fixSecureEventInputBug;
 	BOOL openInExclusiveMode;
-	BOOL processesBacklog;	
+	BOOL processesBacklog;
 	
 	int supportedButtonEvents;
 }
@@ -54,11 +54,18 @@
 - (BOOL) processesBacklog;
 - (void) setProcessesBacklog: (BOOL) value;
 
-// methods that should be overwritten by subclasses
+// methods that should be overridden by subclasses
 - (void) setCookieMappingInDictionary: (NSMutableDictionary*) cookieToButtonMapping;
 
 - (void) sendRemoteButtonEvent: (RemoteControlEventIdentifier) event pressedDown: (BOOL) pressedDown;
 
++ (const char*) remoteControlDeviceName;
+
+// protected methods
+- (void) openRemoteControlDevice;
+- (void) closeRemoteControlDevice: (BOOL) shallSendNotifications;
+
++ (io_object_t) findRemoteDevice;
 + (BOOL) isRemoteAvailable;
 
 @end

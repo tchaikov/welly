@@ -31,12 +31,18 @@ typedef struct {
 
 typedef enum {C0, INTERMEDIATE, ALPHABETIC, DELETE, C1, G1, SPECIAL, ERROR} ASCII_CODE;
 
-typedef enum YLANSIColorKey {
+typedef NS_ENUM(unsigned short, YLANSIColorKey) {
     YLCtrlUANSIColorKey = 1, 
     YLEscEscANSIColorKey = 0
-} YLANSIColorKey;
+};
 
-typedef enum {WLNoneProxy, WLAutoProxy, WLSocksProxy, WLHttpProxy, WLHttpsProxy} WLProxyType;
+typedef NS_ENUM(unsigned short, WLProxyType) {
+    WLNoneProxy,
+    WLAutoProxy,
+    WLSocksProxy,
+    WLHttpProxy,
+    WLHttpsProxy
+};
 
 typedef enum {
 	WLFirebird, WLMaple, WLUnix

@@ -32,11 +32,6 @@
     return self;
 }
 
-- (void)dealloc {
-	[_site release];
-    [_path release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Site Cover related
@@ -46,9 +41,9 @@
         NSFileManager *fileMgr = [NSFileManager defaultManager];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
         NSAssert([paths count] > 0, @"~/Library/Application Support");
-        NSString *dir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"Welly"];
+        NSString *dir = [paths[0] stringByAppendingPathComponent:@"Welly"];
         [fileMgr createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:nil];
-        sCoverDir = [[dir stringByAppendingPathComponent:@"Covers"] retain];
+        sCoverDir = [dir stringByAppendingPathComponent:@"Covers"];
         [fileMgr createDirectoryAtPath:sCoverDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
     return sCoverDir;
@@ -67,7 +62,7 @@
 	 completePathIntoString:nil caseSensitive:NO matchesIntoArray:&paths filterTypes:nil];
 	NSString *path = nil;
 	if ([paths count])
-		path = [paths objectAtIndex:0];
+		path = paths[0];
 	[self setPath:path];
 }
 
@@ -100,8 +95,6 @@
 #pragma mark -
 #pragma mark Accessor
 - (void)setPath:(NSString *)path {
-	[_path release];	
-	[_image release];
     _path = [path copy];
     if (_path)
         _image = [[NSImage alloc] initByReferencingFile:_path];
@@ -110,8 +103,7 @@
 }
 
 - (void)setSite:(WLSite *)site {
-	[_site release];
-	_site = [site retain];
+	_site = site;
 	_title = [_site name];
 	[self loadCover];
 }
@@ -134,7 +126,7 @@
     if ([files count] != 1)
         return NO;
     NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSString *path = [files objectAtIndex:0];
+    NSString *path = files[0];
     BOOL isDir;
     if (![fileMgr fileExistsAtPath:path isDirectory:&isDir] || isDir)
         return NO;
@@ -148,7 +140,7 @@
 		return NO;
 	
     id files = [pboard propertyListForType:NSFilenamesPboardType];
-    NSString *src = [files objectAtIndex:0];
+    NSString *src = files[0];
 	return [self setCoverWithFile:src];
 }
 
@@ -167,7 +159,7 @@
 
 - (NSPasteboard *)draggingPasteboard {
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
     [pboard setString:_path forType:NSFilenamesPboardType];
 	return pboard;
 }

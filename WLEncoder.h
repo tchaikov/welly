@@ -16,10 +16,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef enum WLEncoding {
+typedef NS_ENUM(unsigned short, WLEncoding) {
     WLGBKEncoding = 0,
     WLBig5Encoding = 1, 
-} WLEncoding;
+};
 
 @interface WLEncoder : NSObject
 

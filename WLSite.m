@@ -57,7 +57,7 @@ NSString *const WLDefaultSiteName = @"DefaultSiteName";
 }
 
 + (WLSite *)site {
-    return [[WLSite new] autorelease];
+    return [WLSite new];
 }
 
 + (WLSite *)siteWithDictionary:(NSDictionary *)d {
@@ -76,14 +76,14 @@ NSString *const WLDefaultSiteName = @"DefaultSiteName";
 }
 
 - (NSDictionary *)dictionaryOfSite {
-    return [NSDictionary dictionaryWithObjectsAndKeys:[self name] ?: @"",YLSiteNameAttributeName, [self address], YLSiteAddressAttributeName,
-            [NSNumber numberWithUnsignedShort:[self encoding]], YLSiteEncodingAttributeName, 
-            [NSNumber numberWithUnsignedShort:[self ansiColorKey]], YLSiteAnsiColorKeyAttributeName, 
-            [NSNumber numberWithBool:[self shouldDetectDoubleByte]], YLSiteDetectDoubleByteAttributeName,
-			[NSNumber numberWithBool:[self shouldEnableMouse]], YLSiteEnableMouseAttributeName,
-			[self autoReplyString] ?: @"", YLSiteAutoReplyStringAttributeName,
-            [NSNumber numberWithUnsignedShort:[self proxyType]], WLSiteProxyTypeAttributeName,
-            [self proxyAddress] ?: @"", WLSiteProxyAddressAttributeName, nil];
+    return @{YLSiteNameAttributeName: [self name] ?: @"", YLSiteAddressAttributeName: [self address],
+            YLSiteEncodingAttributeName: [NSNumber numberWithUnsignedShort:[self encoding]], 
+            YLSiteAnsiColorKeyAttributeName: [NSNumber numberWithUnsignedShort:[self ansiColorKey]], 
+            YLSiteDetectDoubleByteAttributeName: @([self shouldDetectDoubleByte]),
+			YLSiteEnableMouseAttributeName: @([self shouldEnableMouse]),
+			YLSiteAutoReplyStringAttributeName: [self autoReplyString] ?: @"",
+            WLSiteProxyTypeAttributeName: @((unsigned short)self.proxyType),
+            WLSiteProxyAddressAttributeName: [self proxyAddress] ?: @""};
 }
 
 - (BOOL)isDummy {

@@ -53,9 +53,8 @@ static BOOL isLion;
 }
 
 + (void)initialize {
-    SInt32 ver;
-    isLeopard = Gestalt(gestaltSystemVersion, &ver) == noErr && ver < 0x1060;
-    isLion = Gestalt(gestaltSystemVersion, &ver) == noErr && ver >= 0x1070;
+    isLeopard = (NSAppKitVersionNumber >= NSAppKitVersionNumber10_6);
+    isLion = (NSAppKitVersionNumber >= NSAppKitVersionNumber10_7);
 }
 
 - (id)init {
@@ -86,10 +85,6 @@ static BOOL isLion;
     return self;
 }
 
-- (void)dealloc {
-    [_URLs release];
-    [super dealloc];
-}
 
 // delegate for QLPreviewPanel
 // zoom effect from the current mouse coordinates
@@ -106,7 +101,7 @@ static BOOL isLion;
 }
 
 - (BOOL)previewView:(id)aView writePreviewItem:(id)item toPasteboard:(id)pboard {
-    [pboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
+    [pboard declareTypes:@[NSURLPboardType] owner:nil];
     [item writeToPasteboard:pboard];
     return YES;
 }
@@ -164,7 +159,7 @@ static BOOL isLion;
 }
 
 - (id)previewPanel:(id)panel previewItemAtIndex:(NSInteger)index {
-    return [_URLs objectAtIndex:index];
+    return _URLs[index];
 }
 
 @end

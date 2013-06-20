@@ -21,8 +21,6 @@
 - (void)addEmoticon:(YLEmoticon *)emoticon;
 - (unsigned)countOfEmoticons;
 - (id)objectInEmoticonsAtIndex:(unsigned)theIndex;
-- (void)getEmoticons:(id *)objsPtr 
-			   range:(NSRange)range;
 - (void)insertObject:(id)obj 
   inEmoticonsAtIndex:(unsigned)theIndex;
 - (void)removeObjectFromEmoticonsAtIndex:(unsigned)theIndex;
@@ -45,10 +43,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLEmoticonsPanelController);
     return self;
 }
 
-- (void)dealloc {
-    [_emoticons release];
-    [super dealloc];
-}
 
 - (void)loadNibFile {
 	if (_emoticonsPanel) {
@@ -84,7 +78,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLEmoticonsPanelController);
 		NSArray *a = [_emoticonsController selectedObjects];
 		
 		if ([a count] == 1) {
-			YLEmoticon *e = [a objectAtIndex:0];
+			YLEmoticon *e = a[0];
 			[textInput insertText:[e content]];
 		}		
 	}
@@ -113,12 +107,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLEmoticonsPanelController);
 }
 
 - (id)objectInEmoticonsAtIndex:(unsigned)theIndex {
-    return [_emoticons objectAtIndex:theIndex];
-}
-
-- (void)getEmoticons:(id *)objsPtr 
-			   range:(NSRange)range {
-    [_emoticons getObjects:objsPtr range:range];
+    return _emoticons[theIndex];
 }
 
 - (void)insertObject:(id)obj 
@@ -131,7 +120,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLEmoticonsPanelController);
 }
 
 - (void)replaceObjectInEmoticonsAtIndex:(unsigned)theIndex withObject:(id)obj {
-    [_emoticons replaceObjectAtIndex:theIndex withObject:obj];
+    _emoticons[theIndex] = obj;
 }
 
 - (void)addEmoticon:(YLEmoticon *)emoticon {

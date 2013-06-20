@@ -39,13 +39,10 @@
 
 - (void) dealloc {
 	[self stopListening: self];
-	[remoteControls release];
-	[super dealloc];
 }
 
 - (BOOL) instantiateAndAddRemoteControlDeviceWithClass: (Class) clazz {
 	RemoteControl* remoteControl = [[clazz alloc] initWithDelegate: delegate];
-	[remoteControl autorelease];
 	if (remoteControl) {
 		[remoteControls addObject: remoteControl];
 		[remoteControl addObserver: self forKeyPath:@"listeningToRemote" options:NSKeyValueObservingOptionNew context:nil];
@@ -70,14 +67,14 @@
 - (void) setListeningToRemote: (BOOL) value {
 	int i;
 	for(i=0; i < [remoteControls count]; i++) {
-		[[remoteControls objectAtIndex: i] setListeningToRemote: value];
+		[remoteControls[i] setListeningToRemote: value];
 	}
 	if (value && value != [self isListeningToRemote]) [self performSelector:@selector(reset) withObject:nil afterDelay:0.01];
 }
 - (BOOL) isListeningToRemote {
 	int i;
 	for(i=0; i < [remoteControls count]; i++) {
-		if ([[remoteControls objectAtIndex: i] isListeningToRemote]) {
+		if ([remoteControls[i] isListeningToRemote]) {
 			return YES;
 		}
 	}
@@ -87,13 +84,13 @@
 - (IBAction) startListening: (id) sender {
 	int i;
 	for(i=0; i < [remoteControls count]; i++) {
-		[[remoteControls objectAtIndex: i] startListening: sender];
+		[remoteControls[i] startListening: sender];
 	}	
 }
 - (IBAction) stopListening: (id) sender {
 	int i;
 	for(i=0; i < [remoteControls count]; i++) {
-		[[remoteControls objectAtIndex: i] stopListening: sender];
+		[remoteControls[i] stopListening: sender];
 	}	
 }
 
@@ -101,14 +98,14 @@
 	BOOL mode = YES;
 	int i;
 	for(i=0; i < [remoteControls count]; i++) {
-		mode = mode && ([[remoteControls objectAtIndex: i] isOpenInExclusiveMode]);
+		mode = mode && ([remoteControls[i] isOpenInExclusiveMode]);
 	}
 	return mode;	
 }
 - (void) setOpenInExclusiveMode: (BOOL) value {
 	int i;
 	for(i=0; i < [remoteControls count]; i++) {
-		[[remoteControls objectAtIndex: i] setOpenInExclusiveMode:value];
+		[remoteControls[i] setOpenInExclusiveMode:value];
 	}	
 }
 

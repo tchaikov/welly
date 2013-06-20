@@ -32,7 +32,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLContextualMenuManager);
 			// So we need to make sure this array have been initialized only once
 			if (!_openURLItemArray) {
 				NSBundle *mainBundle = [NSBundle mainBundle];
-				NSString *preferredLocalizationName = (NSString *)[[mainBundle preferredLocalizations] objectAtIndex:0];
+				NSString *preferredLocalizationName = (NSString *)[mainBundle preferredLocalizations][0];
 				_openURLItemArray = [[NSArray arrayWithContentsOfFile:
 									  [mainBundle pathForResource:WLOpenURLMenuItemFilename 
 														   ofType:@"plist" 
@@ -57,11 +57,11 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLContextualMenuManager);
 										   keyEquivalent:@""];
 	[item setToolTip:url];
 	[item setRepresentedObject:url];
-	return [item autorelease];
+	return item;
 }
 
 + (NSMenu *)menuWithSelectedString:(NSString*)selectedString {
-    NSMenu *menu = [[[NSMenu alloc] init] autorelease];
+    NSMenu *menu = [[NSMenu alloc] init];
 
 	// Remove all '\n' '\r' ' ' from the URL string
 	NSString *longURL = [selectedString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
@@ -100,9 +100,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLContextualMenuManager);
 #endif
 		
 		if ([[[NSApp keyWindow] firstResponder] respondsToSelector:@selector(copy:)]) {
-			NSMenuItem *item = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Copy", @"Menu") 
+			NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Copy", @"Menu") 
 														  action:@selector(copy:) 
-												   keyEquivalent:@""] autorelease];
+												   keyEquivalent:@""];
 			[item setTarget:[[NSApp keyWindow] firstResponder]];
 			[menu addItem:item];
 		}
@@ -162,13 +162,13 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLContextualMenuManager);
 
 + (void)spotlight:(id)sender {
     NSString *u = [sender representedObject];
-    HISearchWindowShow((CFStringRef)u, kNilOptions);
+    HISearchWindowShow((__bridge CFStringRef)u, kNilOptions);
 }
 
 + (void)lookupDictionary:(id)sender {
     NSString *u = [sender representedObject];
     NSPasteboard *spb = [NSPasteboard pasteboardWithUniqueName];
-    [spb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
+    [spb declareTypes:@[NSStringPboardType] owner:self];
     [spb setString:u forType:NSStringPboardType];
     NSPerformService(@"Look Up in Dictionary", spb);
 }

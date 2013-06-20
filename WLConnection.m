@@ -45,7 +45,7 @@
         [self setSite:site];
         if (![site isDummy]) {
 			// WLPTY as the default protocol (a proxy)
-			WLPTY *protocol = [[WLPTY new] autorelease];
+			WLPTY *protocol = [WLPTY new];
 			[self setProtocol:protocol];
 			[protocol setDelegate:self];
 			[protocol setProxyType:[site proxyType]];
@@ -60,23 +60,12 @@
     return self;
 }
 
-- (void)dealloc {
-    [_lastTouchDate release];
-    [_icon release];
-    [_terminal release];
-    [_feeder release];
-    [_protocol release];
-    [_messageDelegate release];
-    [_site release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Accessor
 - (void)setTerminal:(WLTerminal *)value {
 	if (_terminal != value) {
-		[_terminal release];
-		_terminal = [value retain];
+		_terminal = value;
         [_terminal setConnection:self];
 		[_feeder setTerminal:_terminal];
 	}
@@ -93,8 +82,7 @@
 }
 
 - (void)setLastTouchDate {
-    [_lastTouchDate release];
-    _lastTouchDate = [[NSDate date] retain];
+    _lastTouchDate = [NSDate date];
 }
 
 #pragma mark -
@@ -149,7 +137,6 @@
 		   length:(NSInteger)length {
     NSData *data = [[NSData alloc] initWithBytes:buf length:length];
     [self sendMessage:data];
-    [data release];
 }
 
 - (void)sendText:(NSString *)s {
@@ -158,7 +145,7 @@
 
 - (void)sendText:(NSString *)text 
 	   withDelay:(int)microsecond {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    @autoreleasepool {
 
     // replace all '\n' with '\r' 
     NSString *s = [text stringByReplacingOccurrencesOfString:@"\n" withString:@"\r"];
@@ -204,50 +191,50 @@
         }
     }
 
-    [pool release];
+    }
 }
 
 - (void)login {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
+	@autoreleasepool {
 	
-    NSString *addr = [_site address];
-    const char *account = [addr UTF8String];
-    // telnet; send username
-    if (![addr hasPrefix:@"ssh"]) {
-        char *pe = strchr(account, '@');
-        if (pe) {
-            char *ps = pe;
-            for (; ps >= account; --ps)
-                if (*ps == ' ' || *ps == '/')
-                    break;
-            if (ps != pe) {
-                while ([_feeder cursorY] <= 3)
-                    sleep(1);
-                [self sendBytes:ps+1 length:pe-ps-1];
-                [self sendBytes:"\r" length:1];
+        NSString *addr = [_site address];
+        const char *account = [addr UTF8String];
+        // telnet; send username
+        if (![addr hasPrefix:@"ssh"]) {
+            char *pe = strchr(account, '@');
+            if (pe) {
+                char *ps = pe;
+                for (; ps >= account; --ps)
+                    if (*ps == ' ' || *ps == '/')
+                        break;
+                if (ps != pe) {
+                    while ([_feeder cursorY] <= 3)
+                        sleep(1);
+                    [self sendBytes:ps+1 length:pe-ps-1];
+                    [self sendBytes:"\r" length:1];
+                }
             }
+        } else if ([_feeder grid][[_feeder cursorY]][[_feeder cursorX] - 2].byte == '?') {
+            [self sendBytes:"yes\r" length:4];
+            sleep(1);
         }
-    } else if ([_feeder grid][[_feeder cursorY]][[_feeder cursorX] - 2].byte == '?') {
-        [self sendBytes:"yes\r" length:4];
-        sleep(1);
-    }
-    // send password
-    const char *service = "Welly";
-    UInt32 len = 0;
-    void *pass = 0;
+        // send password
+        const char *service = "Welly";
+        UInt32 len = 0;
+        void *pass = 0;
 	
-    OSStatus status = SecKeychainFindGenericPassword(nil,
-        strlen(service), service,
-        strlen(account), account,
-        &len, &pass,
-        nil);
-    if (status == noErr) {
-        [self sendBytes:pass length:len];
-        [self sendBytes:"\r" length:1];
+        OSStatus status = SecKeychainFindGenericPassword(nil,
+            strlen(service), service,
+            strlen(account), account,
+            &len, &pass,
+            nil);
+        if (status == noErr) {
+            [self sendBytes:pass length:len];
+            [self sendBytes:"\r" length:1];
 		SecKeychainItemFreeContent(nil, pass);
-    }
+        }
 	
-	[pool release];
+	}
 }
 
 #pragma mark -

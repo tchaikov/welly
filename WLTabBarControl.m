@@ -36,7 +36,7 @@
 }
 
 - (void)selectTabViewItemAtIndex:(NSInteger)index {
-    NSTabViewItem *tabViewItem = [[[self cells] objectAtIndex:index] representedObject];
+    NSTabViewItem *tabViewItem = [[self cells][index] representedObject];
     [[self tabView] selectTabViewItem:tabViewItem];
 }
 
@@ -54,7 +54,7 @@
 - (NSInteger)indexOfTabViewItem:(NSTabViewItem *)tabViewItem {
     size_t count = [[self cells] count];
     for (size_t i = 0; i < count; ++i) {
-        if ([[[[self cells] objectAtIndex:i] representedObject] isEqualTo:tabViewItem])
+        if ([[[self cells][i] representedObject] isEqualTo:tabViewItem])
             return i;
     }
     return -1;
@@ -84,7 +84,7 @@
 #pragma mark -
 - (void)removeTabViewItem:(NSTabViewItem *)tabViewItem {
     int index = [self indexOfTabViewItem:tabViewItem];
-    [self closeTabClick:[[self cells] objectAtIndex:index]];
+    [self closeTabClick:[self cells][index]];
 }
 
 #pragma mark - Set main controller

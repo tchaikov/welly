@@ -156,15 +156,10 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
 	return self;
 }
 
-- (void)dealloc {
-	[_currentURLList release];
-	//[_currentURLStringBuffer release];
-    [super dealloc];
-}
 #pragma mark -
 #pragma mark Mouse Event Handler
 - (void)mouseUp:(NSEvent *)theEvent {
-	NSString *url = [[_manager activeTrackingAreaUserInfo] objectForKey:WLURLUserInfoName];
+	NSString *url = [_manager activeTrackingAreaUserInfo][WLURLUserInfoName];
 	if (url != nil) {
 		if (([theEvent modifierFlags] & NSShiftKeyMask) == NSShiftKeyMask) {
 			// click while holding shift key or navigate web pages
@@ -205,20 +200,20 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
     [pb declareTypes:types owner:self];
 	
 	NSDictionary *userInfo = [sender representedObject];
-	NSString *urlString = [userInfo objectForKey:WLURLUserInfoName];
+	NSString *urlString = userInfo[WLURLUserInfoName];
     [pb setString:urlString forType:NSStringPboardType];
 	[pb setString:urlString forType:NSURLPboardType];
 }
 
 - (IBAction)openWithBrower:(id)sender {
 	NSDictionary *userInfo = [sender representedObject];
-	NSString *urlString = [userInfo objectForKey:WLURLUserInfoName];
+	NSString *urlString = userInfo[WLURLUserInfoName];
 	
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
-	NSMenu *menu = [[[NSMenu alloc] init] autorelease];
+	NSMenu *menu = [[NSMenu alloc] init];
 	[menu addItemWithTitle:NSLocalizedString(WLMenuTitleCopyURL, @"Contextual Menu")
 					action:@selector(copyURL:)
 			 keyEquivalent:@""];
@@ -245,9 +240,9 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
 	if([_currentURLList count] < 1)
 		return ret;
 	// Get current URL info
-	NSDictionary *urlInfo = [_currentURLList objectAtIndex:_currentSelectedURLIndex];
-	int index = [[urlInfo objectForKey:WLRangeLocationUserInfoName] intValue];
-	int length = [[urlInfo objectForKey:WLRangeLengthUserInfoName] intValue];
+	NSDictionary *urlInfo = _currentURLList[_currentSelectedURLIndex];
+	int index = [urlInfo[WLRangeLocationUserInfoName] intValue];
+	int length = [urlInfo[WLRangeLengthUserInfoName] intValue];
 	int column_start = index % _maxColumn;
 	int row_start = index / _maxColumn;
 	int column_end = (index + length) % _maxColumn;
@@ -280,8 +275,8 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
 }
 
 - (BOOL)openCurrentURL:(NSEvent *)theEvent {
-	NSDictionary *urlInfo = [_currentURLList objectAtIndex:_currentSelectedURLIndex];
-	NSString *url = [urlInfo objectForKey:WLURLUserInfoName];
+	NSDictionary *urlInfo = _currentURLList[_currentSelectedURLIndex];
+	NSString *url = urlInfo[WLURLUserInfoName];
 	if (url != nil) {
 		if (([theEvent modifierFlags] & NSShiftKeyMask) == NSShiftKeyMask) {
 			// click while holding shift key or navigate web pages
@@ -312,8 +307,8 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
 	range.location = index;
 	range.length = length;
 	
-	NSArray *keys = [NSArray arrayWithObjects:WLMouseHandlerUserInfoName, WLURLUserInfoName, WLRangeLocationUserInfoName, WLRangeLengthUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects:self, [[urlString copy] autorelease], [NSNumber numberWithInt:index], [NSNumber numberWithInt:length], nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLURLUserInfoName, WLRangeLocationUserInfoName, WLRangeLengthUserInfoName];
+	NSArray *objects = @[self, [urlString copy], @(index), @(length)];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	[_currentURLList addObject:userInfo];
 	
@@ -341,8 +336,8 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
 	}
 	
 	for (NSDictionary *urlInfo in _currentURLList) {
-		int index = [[urlInfo objectForKey:WLRangeLocationUserInfoName] intValue];
-		int length = [[urlInfo objectForKey:WLRangeLengthUserInfoName] intValue];
+		int index = [urlInfo[WLRangeLocationUserInfoName] intValue];
+		int length = [urlInfo[WLRangeLengthUserInfoName] intValue];
 		
 		WLTerminal *ds = [_view frontMostTerminal];
 		// Set all involved row to be dirty. Reduce the number of [ds setDirty] call.

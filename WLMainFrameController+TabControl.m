@@ -8,6 +8,8 @@
 
 #import "WLMainFrameController+TabControl.h"
 
+#import <PSMTabBarControl/PSMTabBarControl.h>
+
 #import "WLTabBarControl.h"
 #import "WLTabView.h"
 #import "WLConnection.h"
@@ -26,17 +28,18 @@
 - (void)initializeTabControl {
 	// tab control style
     [_tabBarControl setCanCloseOnlyTab:YES];
-    NSAssert([_tabBarControl delegate] == self, @"set in .nib");
+    //NSAssert([_tabBarControl delegate] == self, @"set in .nib");
     //show a new-tab button
     [_tabBarControl setShowAddTabButton:YES];
-    [[_tabBarControl addTabButton] setTarget:self];
-    [[_tabBarControl addTabButton] setAction:@selector(newTab:)];
+    NSButton *button = (NSButton *)[_tabBarControl addTabButton];
+    button.target = self;
+    button.action = @selector(newTab:);
     //_tabView = (WLTabView *)[_tabBarControl tabView];
 	
     // open the portal
     // the switch
     [self tabViewDidChangeNumberOfTabViewItems:_tabView];
-	[_tabBarControl setMainController:[self retain]];
+	[_tabBarControl setMainController:self];
 }
 
 #pragma mark -

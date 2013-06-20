@@ -16,6 +16,7 @@
 #import "WLConnection.h"
 #import "WLEncoder.h"
 #import "WLPostDownloadDelegate.h"
+#import "WLSite.h"
 
 NSString *const WLMenuTitleDownloadPost = @"Download post";
 NSString *const WLMenuTitleThreadTop = @"Thread top";
@@ -29,9 +30,6 @@ NSString *const WLCommandSequenceSameThreadReading = @"\030";	// ^X
 NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 
 @implementation WLClickEntryHotspotHandler
-- (void)dealloc {
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark Mouse Event Handler
@@ -67,12 +65,12 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
-	NSString *commandSequence = [_manager.activeTrackingAreaUserInfo objectForKey:WLMouseCommandSequenceUserInfoName];
+	NSString *commandSequence = (_manager.activeTrackingAreaUserInfo)[WLMouseCommandSequenceUserInfoName];
 	if (commandSequence != nil) {
 		[_view sendText:commandSequence];
 		return;
 	}
-	int moveToRow = [[_manager.activeTrackingAreaUserInfo objectForKey:WLMouseRowUserInfoName] intValue];
+	int moveToRow = [(_manager.activeTrackingAreaUserInfo)[WLMouseRowUserInfoName] intValue];
 	
 	[self enterEntryAtRow:moveToRow];
 }
@@ -104,7 +102,7 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 	NSDictionary *userInfo = [sender representedObject];
 	
 	// Enter the entry
-	int moveToRow = [[userInfo objectForKey:WLMouseRowUserInfoName] intValue];
+	int moveToRow = [userInfo[WLMouseRowUserInfoName] intValue];
 	[self enterEntryAtRow:moveToRow];
 	
 	// Wait until state change
@@ -131,7 +129,7 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 	NSDictionary *userInfo = [sender representedObject];
 	
 	// Move the cursor to the entry
-	int moveToRow = [[userInfo objectForKey:WLMouseRowUserInfoName] intValue];
+	int moveToRow = [userInfo[WLMouseRowUserInfoName] intValue];
 	[self moveCursorToRow:moveToRow];
 }
 
@@ -156,7 +154,7 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
-	NSMenu *menu = [[[NSMenu alloc] init] autorelease];
+	NSMenu *menu = [[NSMenu alloc] init];
 	if ([[_view frontMostTerminal] bbsState].state == BBSBrowseBoard) {
 		[menu addItemWithTitle:NSLocalizedString(WLMenuTitleDownloadPost, @"Contextual Menu")
 						action:@selector(downloadPost:)
@@ -192,8 +190,8 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 				   length:(int)length {
 	NSRect rect = [_view rectAtRow:r column:c height:1 width:length];
 	// Generate User Info
-	NSArray *keys = [NSArray arrayWithObjects:WLMouseHandlerUserInfoName, WLMouseRowUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects:self, [NSNumber numberWithInt:r], nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLMouseRowUserInfoName];
+	NSArray *objects = @[self, @(r)];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo]];
 }
@@ -209,8 +207,8 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 					   length:(int)len {
 	NSRect rect = [_view rectAtRow:r column:c height:1 width:len];
 	// Generate User Info
-	NSArray *keys = [NSArray arrayWithObjects:WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects:self, cmd, nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName];
+	NSArray *objects = @[self, cmd];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo]];
 }

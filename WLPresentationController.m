@@ -67,9 +67,9 @@ WLGlobalConfig *gConfig;
 			  superView:(NSView *)sview
 		 originalWindow:(NSWindow *)owin {
 	if (self = [super init]) {
-		_targetView = [tview retain];
-		_superView = [sview retain];
-		_originalWindow = [owin retain];
+		_targetView = tview;
+		_superView = sview;
+		_originalWindow = owin;
 		_isInPresentationMode = NO;
 		_screenRatio = 0.0f;
 		if (!gConfig) {
@@ -86,9 +86,9 @@ WLGlobalConfig *gConfig;
 			   superView:(NSView*)sview
 		  originalWindow:(NSWindow*)owin {
 	if (self = [super init]) {
-		_targetView = [tview retain];
-		_superView = [sview retain];
-		_originalWindow = [owin retain];
+		_targetView = tview;
+		_superView = sview;
+		_originalWindow = owin;
 		_isInPresentationMode = NO;
 		if (!gConfig) {
 			gConfig = [WLGlobalConfig sharedInstance];
@@ -99,10 +99,6 @@ WLGlobalConfig *gConfig;
 
 #pragma mark -
 #pragma mark Dealloc
-- (void)dealloc {
-	[_fullScreenWindow release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Handle functions - Control Logic
@@ -136,7 +132,7 @@ WLGlobalConfig *gConfig;
 		[anim setDelegate:self];
 		[anim setDuration:0.8];
 		// Set the animation to full screen window
-		[_fullScreenWindow setAnimations:[NSDictionary dictionaryWithObject:anim forKey:@"alphaValue"]];
+		[_fullScreenWindow setAnimations:@{@"alphaValue": anim}];
 		[_fullScreenWindow.animator setAlphaValue:1.0];	
 		// Change UI mode by carbon
 		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
@@ -221,7 +217,6 @@ WLGlobalConfig *gConfig;
 	} else {
 		// Restore old parameters
 		[gConfig setSizeParameters:_originalSizeParameters];
-		[_originalSizeParameters release];
 		_originalSizeParameters = nil;
 	}
 }

@@ -8,6 +8,7 @@
 
 #import "WLEffectView.h"
 #import "WLGlobalConfig.h"
+#import "WLTerminalView.h"
 
 #import <Quartz/Quartz.h>
 #import <ScreenSaver/ScreenSaver.h>
@@ -25,7 +26,7 @@
 - (id)initWithView:(WLTerminalView *)view {
 	self = [self initWithFrame:[view frame]];
 	if (self) {
-		_mainView = [view retain];
+		_mainView = view;
 		[self setWantsLayer:YES];
 	}
 	return self;
@@ -42,19 +43,12 @@
 }
 
 - (void)dealloc {
-	[_mainLayer release];
-	[_ipAddrLayer release];
-	if (_popUpLayer) {
-		[_popUpLayer release];
-	}
 	if (_buttonLayer) {
 		[[[_buttonLayer sublayers] lastObject] removeFromSuperlayer];
-		[_buttonLayer release];
 	}
 	
 	CGColorRelease(_popUpLayerTextColor);
     CGFontRelease(_popUpLayerTextFont);
-	[super dealloc];
 }
 
 - (void)setupLayer {
@@ -110,7 +104,7 @@
 	[_ipAddrLayer setCornerRadius:6.0];
 	
     // Insert the layer into the root layer
-	[_mainLayer addSublayer:[_ipAddrLayer retain]];
+	[_mainLayer addSublayer:_ipAddrLayer];
 }
 
 - (void)drawIPAddrBox:(NSRect)rect {
@@ -144,7 +138,7 @@
 	[_clickEntryLayer setCornerRadius:6.0];
 	
     // Insert the layer into the root layer
-	[_mainLayer addSublayer:[_clickEntryLayer retain]];
+	[_mainLayer addSublayer:_clickEntryLayer];
 }
 
 - (void)drawClickEntry:(NSRect)rect {
@@ -169,8 +163,6 @@
 
 #pragma mark Welly Buttons
 - (void)setupButtonLayer {
-	if (_buttonLayer)
-		[_buttonLayer release];
 	_buttonLayer = [CALayer layer];
 	// Set the colors of the pop-up layer
 	CGColorRef myColor = CGColorCreateGenericRGB(0.05, 0.05, 0.05, 0.9f);
@@ -184,21 +176,19 @@
 	
     // Create a text layer to add so we can see the messages.
     CATextLayer *textLayer = [CATextLayer layer];
-	[textLayer autorelease];
 	// Set its foreground color
 	myColor = CGColorCreateGenericRGB(1, 1, 1, 1.0f);
     [textLayer setForegroundColor:myColor];
 	CGColorRelease(myColor);
 	
-	[_buttonLayer addSublayer:[textLayer retain]];
+	[_buttonLayer addSublayer:textLayer];
 	
 	CATransition *buttonTrans = [CATransition new];
 	[buttonTrans setType:kCATransitionFade];
 	[_buttonLayer addAnimation:buttonTrans forKey:kCATransition];
-    [buttonTrans autorelease];
 	[_buttonLayer setHidden:YES];
     // Insert the layer into the root layer
-	[_mainLayer addSublayer:[_buttonLayer retain]];
+	[_mainLayer addSublayer:_buttonLayer];
 }
 
 - (void)drawButton:(NSRect)rect 
@@ -218,11 +208,8 @@
     [textLayer setFont:font];
 	[textLayer setFontSize:[[WLGlobalConfig sharedInstance] englishFontSize] - 2];
 	// Here, calculate the size of the text layer
-	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-								[NSFont fontWithName:[[WLGlobalConfig sharedInstance] englishFontName] 
-												size:[textLayer fontSize]], 
-								NSFontAttributeName, 
-								nil];
+	NSDictionary *attributes = @{NSFontAttributeName: [NSFont fontWithName:[[WLGlobalConfig sharedInstance] englishFontName] 
+												size:[textLayer fontSize]]};
 	NSSize messageSize = [message sizeWithAttributes:attributes];
 	
 	// Change the size of text layer automatically
@@ -271,7 +258,7 @@
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"indicator" 
 														 ofType:@"png"]; 
 		NSURL *imageURL = [NSURL fileURLWithPath:path]; 
-		CGImageSourceRef src = CGImageSourceCreateWithURL((CFURLRef)imageURL, NULL); 
+		CGImageSourceRef src = CGImageSourceCreateWithURL((__bridge CFURLRef)imageURL, NULL);
 		if (NULL != src) { 
 			_urlIndicatorImage = CGImageSourceCreateImageAtIndex(src, 0, NULL); 
 			CFRelease(src);
@@ -330,16 +317,15 @@
 	
 	// Create a text layer to add so we can see the message.
     CATextLayer *textLayer = [CATextLayer layer];
-	[textLayer autorelease];
 	// Set its foreground color
     [textLayer setForegroundColor:_popUpLayerTextColor];
 	// Modify its styles
 	[textLayer setTruncationMode:kCATruncationEnd];
     [textLayer setFont:_popUpLayerTextFont];
 
-	[_popUpLayer addSublayer:[textLayer retain]];
+	[_popUpLayer addSublayer:textLayer];
 	// Insert the layer into the root layer
-	[_mainLayer addSublayer:[_popUpLayer retain]];
+	[_mainLayer addSublayer:_popUpLayer];
 }
 
 // Just similiar to the code of "addNewLayer"...
@@ -357,11 +343,8 @@
 	// Set the message to the text layer
 	[textLayer setString:message];
 	// Here, calculate the size of the text layer
-	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-								[NSFont fontWithName:DEFAULT_POPUP_BOX_FONT 
-												size:textLayer.fontSize], 
-								NSFontAttributeName, 
-								nil];
+	NSDictionary *attributes = @{NSFontAttributeName: [NSFont fontWithName:DEFAULT_POPUP_BOX_FONT 
+												size:textLayer.fontSize]};
 	NSSize messageSize = [message sizeWithAttributes:attributes];
 	
 	// Change the size of text layer automatically

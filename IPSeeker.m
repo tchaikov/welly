@@ -42,16 +42,15 @@ NSString* L(NSString* key) {
 - (id)init {
 	self = [super init];
 	if(self) {
-		m_cache = [[NSMutableDictionary dictionary] retain];
+		m_cache = [NSMutableDictionary dictionary];
 		NSString* path = [[NSBundle mainBundle] pathForResource:@"QQWry" ofType:@"dat"];
 		if(path) {
-			m_file = [[NSFileHandle fileHandleForReadingAtPath:path] retain];
+			m_file = [NSFileHandle fileHandleForReadingAtPath:path];
 			if(m_file) {
 				m_indexBegin = [self readInt4:0];
 				m_indexEnd = [self readInt4:4];
 				if(m_indexBegin == -1 || m_indexEnd == -1) {
 					[m_file closeFile];
-					[m_file release];
 					m_file = nil;
 				}
 			}			
@@ -61,10 +60,7 @@ NSString* L(NSString* key) {
 }
 
 - (void)dealloc {
-	[m_cache release];
 	[m_file closeFile];
-	[m_file release];
-	[super dealloc];
 }
 
 #pragma mark -
@@ -79,16 +75,16 @@ NSString* L(NSString* key) {
 		return L(@"LQIPBadFile");
 	
 	NSString* ipStr = [NSString stringWithFormat:@"%d.%d.%d.%d", ip[0] & 0xFF, ip[1] & 0xFF, ip[2] & 0xFF, ip[3] & 0xFF];
-	NSString* loc = [m_cache objectForKey:ipStr];
+	NSString* loc = m_cache[ipStr];
 	if(loc == nil) {
 		UInt32 offset = [self locateIP:ip];
 		if(offset != -1) {
 			loc = [self getLocationByOffset:offset];
-			[m_cache setObject:loc forKey:ipStr];
+			m_cache[ipStr] = loc;
 		} else
 			loc = [NSString stringWithFormat:@"%@ %@", L(@"LQCountryUnknown"), L(@"LQAreaUnknown")];
 	} else
-		loc = [m_cache objectForKey:ipStr];
+		loc = m_cache[ipStr];
 	
 	if(locationOnly)
 		return loc;
@@ -253,7 +249,7 @@ NSString* L(NSString* key) {
         else
             [data appendBytes:[tmp bytes] length:1];
 	}
-	return [(NSString*)CFStringCreateFromExternalRepresentation(kCFAllocatorDefault, (CFDataRef)data, kCFStringEncodingGB_18030_2000) autorelease];
+	return (NSString*)CFBridgingRelease(CFStringCreateFromExternalRepresentation(kCFAllocatorDefault, (CFDataRef)data, kCFStringEncodingGB_18030_2000));
 }
 
 #pragma mark -

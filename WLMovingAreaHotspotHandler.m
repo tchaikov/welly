@@ -57,7 +57,7 @@ NSString *const WLMenuTitleQuitMode = @"Quit Mode";
 #pragma mark -
 #pragma mark Mouse Event Handler
 - (void)mouseUp:(NSEvent *)theEvent {
-	NSString *commandSequence = [_manager.backgroundTrackingAreaUserInfo objectForKey:WLMouseCommandSequenceUserInfoName];
+	NSString *commandSequence = (_manager.backgroundTrackingAreaUserInfo)[WLMouseCommandSequenceUserInfoName];
 	[_view sendText:commandSequence];
 }
 
@@ -68,14 +68,14 @@ NSString *const WLMenuTitleQuitMode = @"Quit Mode";
 }
 
 - (void)mouseExited:(NSEvent *)theEvent {
-	if ([NSCursor currentCursor] == [_manager.backgroundTrackingAreaUserInfo objectForKey:WLMouseCursorUserInfoName])
+	if ([NSCursor currentCursor] == (_manager.backgroundTrackingAreaUserInfo)[WLMouseCursorUserInfoName])
 		[_manager restoreNormalCursor];
 	_manager.backgroundTrackingAreaUserInfo = nil;
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent {
 	if ([NSCursor currentCursor] == _manager.normalCursor)
-		[(NSCursor *)[_manager.backgroundTrackingAreaUserInfo objectForKey:WLMouseCursorUserInfoName] set];
+		[(NSCursor *)(_manager.backgroundTrackingAreaUserInfo)[WLMouseCursorUserInfoName] set];
 }
 
 #pragma mark -
@@ -93,7 +93,7 @@ NSString *const WLMenuTitleQuitMode = @"Quit Mode";
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
-	NSMenu *menu = [[[NSMenu alloc] init] autorelease];
+	NSMenu *menu = [[NSMenu alloc] init];
 	if ([self shouldEnablePageUpDown]) {
 		[menu addItemWithTitle:NSLocalizedString(WLMenuTitlePressHome, @"Contextual Menu")
 						action:@selector(pressHome:)
@@ -128,8 +128,8 @@ NSString *const WLMenuTitleQuitMode = @"Quit Mode";
 				   width:(int)w {
 	NSRect rect = [_view rectAtRow:r column:c height:h width:w];
 	// Generate User Info
-	NSArray *keys = [NSArray arrayWithObjects:WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, WLMouseCursorUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects:self, WLCommandSequenceLeftArrow, _leftArrowCursor, nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, WLMouseCursorUserInfoName];
+	NSArray *objects = @[self, WLCommandSequenceLeftArrow, _leftArrowCursor];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo cursor: _leftArrowCursor]];
 }
@@ -151,8 +151,8 @@ NSString *const WLMenuTitleQuitMode = @"Quit Mode";
 					height:(int)h 
 					 width:(int)w {
 	NSRect rect = [_view rectAtRow:r column:c height:h width:w];
-	NSArray *keys = [NSArray arrayWithObjects:WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, WLMouseCursorUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects:self, WLCommandSequencePageUp, _pageUpCursor, nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, WLMouseCursorUserInfoName];
+	NSArray *objects = @[self, WLCommandSequencePageUp, _pageUpCursor];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo cursor:_pageUpCursor]];
 }
@@ -172,8 +172,8 @@ NSString *const WLMenuTitleQuitMode = @"Quit Mode";
 					   width:(int)w {
 	NSRect rect = [_view rectAtRow:r column:c height:h width:w];
 	// Generate User Info
-	NSArray *keys = [NSArray arrayWithObjects:WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, WLMouseCursorUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects:self, WLCommandSequencePageDown, _pageDownCursor, nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLMouseCommandSequenceUserInfoName, WLMouseCursorUserInfoName];
+	NSArray *objects = @[self, WLCommandSequencePageDown, _pageDownCursor];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo cursor:_pageDownCursor]];
 }

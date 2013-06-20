@@ -14,6 +14,7 @@
 #import "WLTabBarControl.h"
 #import "WLMainFrameController+FullScreen.h"
 #import "WLGlobalConfig.h"
+#import "WLTabView.h"
 
 @implementation WLMainFrameController (FullScreen)
 
@@ -42,7 +43,6 @@
 	} else {
 		// Restore old parameters
 		[gConfig setSizeParameters:_originalSizeParameters];
-		[_originalSizeParameters release];
 		_originalSizeParameters = nil;
 	}
 }

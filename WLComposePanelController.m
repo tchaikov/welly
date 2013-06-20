@@ -64,7 +64,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLComposePanelController);
     [colorList insertColor:[config colorCyanHilite] key:NSLocalizedString(@"CyanHilite", @"Color") atIndex:14];
     [colorList insertColor:[config colorWhiteHilite] key:NSLocalizedString(@"WhiteHilite", @"Color") atIndex:15];
     [colorPanel attachColorList:colorList];
-    [colorList release];
 	
 	_shadowForBlink = [[NSShadow alloc] init];
 	[_shadowForBlink setShadowOffset:NSMakeSize(3.0, -3.0)];
@@ -148,7 +147,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLComposePanelController);
 	id underlineStyle = [storage attribute:NSUnderlineStyleAttributeName atIndex:selectedRange.location effectiveRange:nil];
 	// if already underlined, then the user is meant to remove the line.
 	if ([underlineStyle intValue] == NSUnderlineStyleNone) {
-		[storage addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleThick] range:selectedRange];
+		[storage addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleThick) range:selectedRange];
 	}
 	else
 		[storage removeAttribute:NSUnderlineStyleAttributeName range:selectedRange];

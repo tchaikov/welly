@@ -28,8 +28,8 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 }
 
 + (NSArray *)applicationIdentifierArrayForURLScheme: (NSString *) scheme {
-    CFArrayRef array = LSCopyAllHandlersForURLScheme((CFStringRef)scheme);
-    NSMutableArray *result = [NSMutableArray arrayWithArray: (NSArray *) array];
+    CFArrayRef array = LSCopyAllHandlersForURLScheme((__bridge CFStringRef)scheme);
+    NSMutableArray *result = [NSMutableArray arrayWithArray: (__bridge NSArray *) array];
     CFRelease(array);
     return result;
 }
@@ -63,17 +63,17 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
         NSString *appPath = [ws absolutePathForAppBundleWithIdentifier: appId];
         if (appPath) {
             NSURL *appURL = [NSURL fileURLWithPath: appPath];
-            if (LSCopyDisplayNameForURL((CFURLRef)appURL, &appNameInCFString) == noErr) {                
-                NSString *appName = [NSString stringWithString: (NSString *) appNameInCFString];
+            if (LSCopyDisplayNameForURL((__bridge CFURLRef)appURL, &appNameInCFString) == noErr) {
+                NSString *appName = [NSString stringWithString: (__bridge NSString *) appNameInCFString];
                 CFRelease(appNameInCFString);
                 
                 if (wellyCount > 1 && [[appId lowercaseString] isEqualToString: wellyIdentifier])
-                    appName = [NSString stringWithFormat:@"%@ (%@)", appName, [[[NSBundle bundleWithPath: appPath] infoDictionary] objectForKey: @"CFBundleVersion"]];
+                    appName = [NSString stringWithFormat:@"%@ (%@)", appName, [[NSBundle bundleWithPath: appPath] infoDictionary][@"CFBundleVersion"]];
                 
                 NSImage *appIcon = [ws iconForFile:appPath];
                 [appIcon setSize: NSMakeSize(16, 16)];
                 
-                NSMenuItem *item = [[[NSMenuItem alloc] initWithTitle: (NSString *)appName action: NULL keyEquivalent: @""] autorelease];
+                NSMenuItem *item = [[NSMenuItem alloc] initWithTitle: (NSString *)appName action: NULL keyEquivalent: @""];
                 [item setRepresentedObject: appId];
                 if (appIcon) [item setImage: appIcon];
                 [menuItems addObject: item];
@@ -81,15 +81,15 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
         }
     }
     
-    NSMenu *menu = [[[NSMenu alloc] initWithTitle: @"PopUp Menu"] autorelease];
+    NSMenu *menu = [[NSMenu alloc] initWithTitle: @"PopUp Menu"];
     for (NSMenuItem *item in menuItems) 
         [menu addItem: item];
     [button setMenu: menu];
     
     /* Select the default client */
-    CFStringRef defaultHandler = LSCopyDefaultHandlerForURLScheme((CFStringRef) scheme);
+    CFStringRef defaultHandler = LSCopyDefaultHandlerForURLScheme((__bridge CFStringRef) scheme);
     if (defaultHandler) {
-        NSInteger index = [button indexOfItemWithRepresentedObject: (NSString *) defaultHandler];
+        NSInteger index = [button indexOfItemWithRepresentedObject: (__bridge NSString *) defaultHandler];
         if (index != -1) 
             [button selectItemAtIndex: index];
         CFRelease(defaultHandler);
@@ -134,14 +134,14 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 		// Create a new window to display the preference views.
 		// If the developer attached a window to this controller
 		// in Interface Builder, it gets replaced with this one.
-	NSWindow *window = [[[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,1000,1000)
+	NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,1000,1000)
 												    styleMask:(NSTitledWindowMask |
 															   NSClosableWindowMask |
 															   NSMiniaturizableWindowMask)
 													  backing:NSBackingStoreBuffered
-													    defer:YES] autorelease];
+													    defer:YES];
 	[self setWindow:window];
-	contentSubview = [[[NSView alloc] initWithFrame:[[[self window] contentView] frame]] autorelease];
+	contentSubview = [[NSView alloc] initWithFrame:[[[self window] contentView] frame]];
 	[contentSubview setAutoresizingMask:(NSViewMinYMargin | NSViewWidthSizable)];
 	[[[self window] contentView] addSubview:contentSubview];
 	[[self window] setShowsToolbarButton:NO];
@@ -150,13 +150,6 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 
 
 
-- (void) dealloc {
-	[toolbarIdentifiers release];
-	[toolbarViews release];
-	[toolbarItems release];
-	[viewAnimation release];
-	[super dealloc];
-}
 
 
 #pragma mark -
@@ -209,13 +202,13 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 - (IBAction) setDefaultTelnetClient: (id) sender {
     NSString *appId = [[sender selectedItem] representedObject];
     if (appId) 
-        LSSetDefaultHandlerForURLScheme(CFSTR("telnet"), (CFStringRef)appId);
+        LSSetDefaultHandlerForURLScheme(CFSTR("telnet"), (__bridge CFStringRef)appId);
 }
 
 - (IBAction) setDefaultSSHClient: (id) sender {
     NSString *appId = [[sender selectedItem] representedObject];
     if (appId) 
-        LSSetDefaultHandlerForURLScheme(CFSTR("ssh"), (CFStringRef)appId);    
+        LSSetDefaultHandlerForURLScheme(CFSTR("ssh"), (__bridge CFStringRef)appId);
 }
 
 #pragma mark -
@@ -246,18 +239,18 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 	NSAssert (view != nil,
 			  @"Attempted to add a nil view when calling -addView:label:image:.");
 	
-	NSString *identifier = [[label copy] autorelease];
+	NSString *identifier = [label copy];
 	
 	[toolbarIdentifiers addObject:identifier];
-	[toolbarViews setObject:view forKey:identifier];
+	toolbarViews[identifier] = view;
 	
-	NSToolbarItem *item = [[[NSToolbarItem alloc] initWithItemIdentifier:identifier] autorelease];
+	NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:identifier];
 	[item setLabel:label];
 	[item setImage:image];
 	[item setTarget:self];
 	[item setAction:@selector(toggleActivePreferenceView:)];
 	
-	[toolbarItems setObject:item forKey:identifier];
+	toolbarItems[identifier] = item;
 }
 
 
@@ -323,10 +316,9 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 		[toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
 		[toolbar setDelegate:self];
 		[[self window] setToolbar:toolbar];
-		[toolbar release];
 	}
 	
-	NSString *firstIdentifier = [toolbarIdentifiers objectAtIndex:0];
+	NSString *firstIdentifier = toolbarIdentifiers[0];
 	[[[self window] toolbar] setSelectedItemIdentifier:firstIdentifier];
 	[self displayViewForIdentifier:firstIdentifier animate:NO];
 	
@@ -373,7 +365,7 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInserted 
 {
-	return [toolbarItems objectForKey:identifier];
+	return toolbarItems[identifier];
 	(void)toolbar;
 	(void)willBeInserted;
 }
@@ -392,7 +384,7 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 - (void)displayViewForIdentifier:(NSString *)identifier animate:(BOOL)animate
 {	
 		// Find the view we want to display.
-	NSView *newView = [toolbarViews objectForKey:identifier];
+	NSView *newView = toolbarViews[identifier];
 
 		// See if there are any visible views.
 	NSView *oldView = nil;
@@ -427,7 +419,7 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
 			[[self window] setFrame:[self frameForView:newView] display:YES animate:animate];
 		}
 		
-		[[self window] setTitle:[[toolbarItems objectForKey:identifier] label]];
+		[[self window] setTitle:[toolbarItems[identifier] label]];
 	}
 }
 
@@ -447,27 +439,19 @@ static DBPrefsWindowController *_sharedPrefsWindowController = nil;
     else
 		[viewAnimation setDuration:0.25];
 	
-	NSDictionary *fadeOutDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-		oldView, NSViewAnimationTargetKey,
-		NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
-		nil];
+	NSDictionary *fadeOutDictionary = @{NSViewAnimationTargetKey: oldView,
+		NSViewAnimationEffectKey: NSViewAnimationFadeOutEffect};
 
-	NSDictionary *fadeInDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-		newView, NSViewAnimationTargetKey,
-		NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
-		nil];
+	NSDictionary *fadeInDictionary = @{NSViewAnimationTargetKey: newView,
+		NSViewAnimationEffectKey: NSViewAnimationFadeInEffect};
 
-	NSDictionary *resizeDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-		[self window], NSViewAnimationTargetKey,
-		[NSValue valueWithRect:[[self window] frame]], NSViewAnimationStartFrameKey,
-		[NSValue valueWithRect:[self frameForView:newView]], NSViewAnimationEndFrameKey,
-		nil];
+	NSDictionary *resizeDictionary = @{NSViewAnimationTargetKey: [self window],
+		NSViewAnimationStartFrameKey: [NSValue valueWithRect:[[self window] frame]],
+		NSViewAnimationEndFrameKey: [NSValue valueWithRect:[self frameForView:newView]]};
 	
-	NSArray *animationArray = [NSArray arrayWithObjects:
-		fadeOutDictionary,
+	NSArray *animationArray = @[fadeOutDictionary,
 		fadeInDictionary,
-		resizeDictionary,
-		nil];
+		resizeDictionary];
 	
 	[viewAnimation setViewAnimations:animationArray];
 	[viewAnimation startAnimation];

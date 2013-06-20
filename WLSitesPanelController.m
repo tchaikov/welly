@@ -21,8 +21,6 @@
 
 /* sites accessors */
 - (id)objectInSitesAtIndex:(NSUInteger)index;
-- (void)getSites:(id *)objects 
-		   range:(NSRange)range;
 - (void)insertObject:(id)anObject 
 	  inSitesAtIndex:(NSUInteger)index;
 - (void)removeObjectFromSitesAtIndex:(NSUInteger)index;
@@ -61,14 +59,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
 
 - (void)awakeFromNib {
 	// register drag & drop in site view
-	[_tableView registerForDraggedTypes:[NSArray arrayWithObject:SiteTableViewDataType]];
+	[_tableView registerForDraggedTypes:@[SiteTableViewDataType]];
 }
 
-- (void)dealloc {
-    [_sites release];
-	[_sitesObservers release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Save/Load Sites Array
@@ -126,11 +119,11 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
 
 - (void)openSitesPanelInWindow:(NSWindow *)mainWindow 
 				    andAddSite:(WLSite *)site {
-	site = [[site copy] autorelease];
+	site = [site copy];
     //[self performSelector:@selector(openSitesPanelInWindow:) withObject:mainWindow afterDelay:0.1];
 	[self openSitesPanelInWindow:mainWindow];
 	[_sitesController addObject:site];
-    [_sitesController setSelectedObjects:[NSArray arrayWithObject:site]];
+    [_sitesController setSelectedObjects:@[site]];
     if ([_siteNameField acceptsFirstResponder])
         [_sitesPanel makeFirstResponder:_siteNameField];
 }
@@ -140,8 +133,8 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
     [self closeSitesPanel:sender];
     
     if ([a count] == 1) {
-        WLSite *s = [a objectAtIndex:0];
-        [[WLMainFrameController sharedInstance] newConnectionWithSite:[[s copy] autorelease]];
+        WLSite *s = a[0];
+        [[WLMainFrameController sharedInstance] newConnectionWithSite:[s copy]];
     }
 }
 
@@ -219,7 +212,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
 - (BOOL)tableView:(NSTableView *)tv writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard*)pboard {
     // copy to the pasteboard.
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rowIndexes];
-    [pboard declareTypes:[NSArray arrayWithObject:SiteTableViewDataType] owner:self];
+    [pboard declareTypes:@[SiteTableViewDataType] owner:self];
     [pboard setData:data forType:SiteTableViewDataType];
     return YES;
 }
@@ -243,7 +236,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
     NSIndexSet* rowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:rowData];
     int dragRow = [rowIndexes firstIndex];
     // move
-    NSObject *obj = [_sites objectAtIndex:dragRow];
+    NSObject *obj = _sites[dragRow];
     [_sitesController insertObject:obj atArrangedObjectIndex:row];
     if (row < dragRow)
         ++dragRow;
@@ -269,12 +262,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
 - (id)objectInSitesAtIndex:(NSUInteger)index {
 	if (index >= [_sites count])
 		return NULL;
-    return [_sites objectAtIndex:index];
-}
-
-- (void)getSites:(id *)objects 
-		   range:(NSRange)range {
-    [_sites getObjects:objects range:range];
+    return _sites[index];
 }
 
 - (void)insertObject:(id)anObject 
@@ -288,6 +276,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
 
 - (void)replaceObjectInSitesAtIndex:(NSUInteger)index 
 						 withObject:(id)anObject {
-    [_sites replaceObjectAtIndex:index withObject:anObject];
+    _sites[index] = anObject;
 }
 @end

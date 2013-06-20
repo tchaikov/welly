@@ -12,6 +12,7 @@
 #import "WLTerminal.h"
 #import "WLConnection.h"
 #import "WLAsciiArtRender.h"
+#import "WLSite.h"
 
 static WLGlobalConfig *gConfig;
 
@@ -51,11 +52,9 @@ static NSImage *gLeftImage;
 	
     [self setFrameSize:[gConfig contentSize]];
 	
-    [_backedImage release];
     _backedImage = [[NSImage alloc] initWithSize:[gConfig contentSize]];
     [_backedImage setFlipped:NO];
 	
-    [gLeftImage release]; 
     gLeftImage = [[NSImage alloc] initWithSize:NSMakeSize(_fontWidth, _fontHeight)];			
 	
     if (_singleAdvance)
@@ -80,12 +79,12 @@ static NSImage *gLeftImage;
         [self configure];
 		
 		// Register KVO
-		NSArray *observeKeys = [NSArray arrayWithObjects:@"shouldSmoothFonts", @"showsHiddenText", @"cellWidth", @"cellHeight", @"cellSize",
+		NSArray *observeKeys = @[@"shouldSmoothFonts", @"showsHiddenText", @"cellWidth", @"cellHeight", @"cellSize",
 								@"chineseFontName", @"chineseFontSize", @"chineseFontPaddingLeft", @"chineseFontPaddingBottom",
 								@"englishFontName", @"englishFontSize", @"englishFontPaddingLeft", @"englishFontPaddingBottom", 
 								@"colorBlack", @"colorBlackHilite", @"colorRed", @"colorRedHilite", @"colorGreen", @"colorGreenHilite",
 								@"colorYellow", @"colorYellowHilite", @"colorBlue", @"colorBlueHilite", @"colorMagenta", @"colorMagentaHilite", 
-								@"colorCyan", @"colorCyanHilite", @"colorWhite", @"colorWhiteHilite", @"colorBG", @"colorBGHilite", nil];
+								@"colorCyan", @"colorCyanHilite", @"colorWhite", @"colorWhiteHilite", @"colorBG", @"colorBGHilite"];
 		for (NSString *key in observeKeys)
 			[[WLGlobalConfig sharedInstance] addObserver:self
 											  forKeyPath:key
@@ -107,9 +106,6 @@ static NSImage *gLeftImage;
         free(_singleAdvance);
     if (_doubleAdvance)
         free(_doubleAdvance);
-    [_backedImage release];
-	[_asciiArtRender release];
-    [super dealloc];
 }
 
 #pragma mark -
@@ -182,17 +178,17 @@ static NSImage *gLeftImage;
 }
 
 - (void)tick {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	[self updateBackedImage];
+    @autoreleasepool {
+		[self updateBackedImage];
     WLTerminal *ds = [self frontMostTerminal];
-	
-	if (ds && (_x != [ds cursorColumn] || _y != [ds cursorRow])) {
-		[self setNeedsDisplayInRect:NSMakeRect(_x * _fontWidth, (_maxRow - 1 - _y) * _fontHeight, _fontWidth, _fontHeight)];
-		[self setNeedsDisplayInRect:NSMakeRect([ds cursorColumn] * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight, _fontWidth, _fontHeight)];
-		_x = [ds cursorColumn];
-		_y = [ds cursorRow];
-	}
-    [pool release];
+		
+		if (ds && (_x != [ds cursorColumn] || _y != [ds cursorRow])) {
+			[self setNeedsDisplayInRect:NSMakeRect(_x * _fontWidth, (_maxRow - 1 - _y) * _fontHeight, _fontWidth, _fontHeight)];
+			[self setNeedsDisplayInRect:NSMakeRect([ds cursorColumn] * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight, _fontWidth, _fontHeight)];
+			_x = [ds cursorColumn];
+			_y = [ds cursorRow];
+		}
+    }
 }
 
 - (NSRect)cellRectForRect:(NSRect)r {
@@ -204,24 +200,24 @@ static NSImage *gLeftImage;
 }
 
 - (void)drawRect:(NSRect)rect {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    WLTerminal *ds = [self frontMostTerminal];
+    @autoreleasepool {
+        WLTerminal *ds = [self frontMostTerminal];
 	if ([self isConnected]) {
 		// Modified by gtCarrera
 		// Draw the background color first!!!
 		[[gConfig colorBG] set];
-        NSRect retangle = [self bounds];
+            NSRect retangle = [self bounds];
 		NSRectFill(retangle);
-        /* Draw the backed image */
+            /* Draw the backed image */
 		
 		NSRect imgRect = rect;
 		imgRect.origin.y = (_fontHeight * _maxRow) - rect.origin.y - rect.size.height;
 		[_backedImage compositeToPoint:rect.origin
 							  fromRect:rect
 							 operation:NSCompositeCopy];
-        [self drawBlink];
-        
-        /* Draw the url underline */
+            [self drawBlink];
+            
+            /* Draw the url underline */
 		int c, r;
 		[[NSColor orangeColor] set];
 		[NSBezierPath setDefaultLineWidth: 1.0];
@@ -237,24 +233,24 @@ static NSImage *gLeftImage;
 				}
 			}
 		}
-        
+            
 		/* Draw the cursor */
 		[[NSColor whiteColor] set];
 		[NSBezierPath setDefaultLineWidth:2.0];
 		[NSBezierPath strokeLineFromPoint:NSMakePoint([ds cursorColumn] * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight + 1) 
 								  toPoint:NSMakePoint(([ds cursorColumn] + 1) * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight + 1) ];
-        [NSBezierPath setDefaultLineWidth:1.0];
-        _x = [ds cursorColumn], _y = [ds cursorRow];
+            [NSBezierPath setDefaultLineWidth:1.0];
+            _x = [ds cursorColumn], _y = [ds cursorRow];
 		
-        /* Draw the selection */
+            /* Draw the selection */
 		//[self drawSelection];
 	} else {
 		[[gConfig colorBG] set];
-        NSRect r = [self bounds];
-        NSRectFill(r);
+            NSRect r = [self bounds];
+            NSRectFill(r);
 	}
 	
-    [pool release];
+    }
 }
 
 - (void)updateBlinkTicker:(NSTimer *)timer {
@@ -273,25 +269,25 @@ static NSImage *gLeftImage;
     if (!ds) 
 		return;
 	
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    for (r = 0; r < _maxRow; r++) {
-        cell *currRow = [ds cellsOfRow: r];
-        for (c = 0; c < _maxColumn; c++) {
-            if (isBlinkCell(currRow[c])) {
-                int bgColorIndex = currRow[c].attr.f.reverse ? currRow[c].attr.f.fgColor : currRow[c].attr.f.bgColor;
-                BOOL bold = currRow[c].attr.f.reverse ? currRow[c].attr.f.bold : NO;
+    @autoreleasepool {
+        for (r = 0; r < _maxRow; r++) {
+            cell *currRow = [ds cellsOfRow: r];
+            for (c = 0; c < _maxColumn; c++) {
+                if (isBlinkCell(currRow[c])) {
+                    int bgColorIndex = currRow[c].attr.f.reverse ? currRow[c].attr.f.fgColor : currRow[c].attr.f.bgColor;
+                    BOOL bold = currRow[c].attr.f.reverse ? currRow[c].attr.f.bold : NO;
 				
 				// Modified by K.O.ed: All background color use same alpha setting.
 				NSColor *bgColor = [gConfig bgColorAtIndex:bgColorIndex hilite:bold];
 				//bgColor = [bgColor colorWithAlphaComponent:[[gConfig colorBG] alphaComponent]];
 				[bgColor set];
-                //[[gConfig colorAtIndex: bgColorIndex hilite: bold] set];
-                NSRectFill(NSMakeRect(c * _fontWidth, (_maxRow - r - 1) * _fontHeight, _fontWidth, _fontHeight));
+                    //[[gConfig colorAtIndex: bgColorIndex hilite: bold] set];
+                    NSRectFill(NSMakeRect(c * _fontWidth, (_maxRow - r - 1) * _fontHeight, _fontWidth, _fontHeight));
+                }
             }
         }
-    }
     
-    [pool release];
+    }
 }
 
 /* 
@@ -305,7 +301,7 @@ static NSImage *gLeftImage;
  */
 - (void)extendBottomFrom:(int)start
 					  to:(int)end {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    @autoreleasepool {
 	[_backedImage lockFocus];
 	[_backedImage compositeToPoint:NSMakePoint(0, (_maxRow - end) * _fontHeight) 
 						  fromRect:NSMakeRect(0, (_maxRow - end - 1) * _fontHeight, _maxColumn * _fontWidth, (end - start) * _fontHeight) 
@@ -314,7 +310,7 @@ static NSImage *gLeftImage;
 	[gConfig->_colorTable[0][gConfig->_bgColorIndex] set];
 	NSRectFill(NSMakeRect(0, (_maxRow - end - 1) * _fontHeight, _maxColumn * _fontWidth, _fontHeight));
 	[_backedImage unlockFocus];
-    [pool release];
+    }
 }
 
 
@@ -327,7 +323,7 @@ static NSImage *gLeftImage;
  */
 - (void)extendTopFrom:(int)start 
 				   to:(int)end {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    @autoreleasepool {
     [_backedImage lockFocus];
 	[_backedImage compositeToPoint:NSMakePoint(0, (_maxRow - end - 1) * _fontHeight) 
 						  fromRect:NSMakeRect(0, (_maxRow - end) * _fontHeight, _maxColumn * _fontWidth, (end - start) * _fontHeight) 
@@ -336,16 +332,16 @@ static NSImage *gLeftImage;
 	[gConfig->_colorTable[0][gConfig->_bgColorIndex] set];
 	NSRectFill(NSMakeRect(0, (_maxRow - start - 1) * _fontHeight, _maxColumn * _fontWidth, _fontHeight));
 	[_backedImage unlockFocus];
-    [pool release];
+    }
 }
 
 - (void)updateBackedImage {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	int x, y;
+    @autoreleasepool {
+		int x, y;
     WLTerminal *ds = [self frontMostTerminal];
-	[_backedImage lockFocus];
-	CGContextRef myCGContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-	if (ds) {
+		[_backedImage lockFocus];
+		CGContextRef myCGContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+		if (ds) {
         /* Draw Background */
         for (y = 0; y < _maxRow; y++) {
             for (x = 0; x < _maxColumn; x++) {
@@ -371,15 +367,15 @@ static NSImage *gLeftImage;
                 [ds setDirty:NO atRow:y column:x];
             }
         }*/
-		[ds removeAllDirtyMarks];
+			[ds removeAllDirtyMarks];
     } else {
         [[NSColor clearColor] set];
         CGContextFillRect(myCGContext, CGRectMake(0, 0, _maxColumn * _fontWidth, _maxRow * _fontHeight));
     }
-	
-	[_backedImage unlockFocus];
-    [pool release];
-	return;
+		
+		[_backedImage unlockFocus];
+		return;
+	}
 }
 
 - (void)drawStringForRow:(int)r
@@ -708,7 +704,7 @@ static NSImage *gLeftImage;
 // Get current BBS image
 - (NSImage *)image {
 	// Leave for others to release it
-	return [[[NSImage alloc] initWithData:[self dataWithPDFInsideRect:[self frame]]] autorelease];
+	return [[NSImage alloc] initWithData:[self dataWithPDFInsideRect:[self frame]]];
 }
 
 #pragma mark -

@@ -26,7 +26,7 @@ NSString *const WLMenuTitleAddAsFriend = @"Add %@ as friend";
 #pragma mark -
 #pragma mark Event Handle
 - (void)mouseUp:(NSEvent *)theEvent {
-	NSString *author = [_manager.activeTrackingAreaUserInfo objectForKey:WLMouseAuthorUserInfoName];
+	NSString *author = (_manager.activeTrackingAreaUserInfo)[WLMouseAuthorUserInfoName];
 	if (author == nil) {
 		return;
 	}
@@ -37,7 +37,7 @@ NSString *const WLMenuTitleAddAsFriend = @"Add %@ as friend";
 - (void)mouseEntered:(NSEvent *)theEvent {
 	NSDictionary *userInfo = [[theEvent trackingArea] userInfo];
 	if ([_view isMouseActive]) {
-		NSString *buttonTitle = [NSString stringWithFormat:NSLocalizedString(WLButtonNameAuthorMode, @"Mouse Button"), [userInfo objectForKey:WLMouseAuthorUserInfoName]];
+		NSString *buttonTitle = [NSString stringWithFormat:NSLocalizedString(WLButtonNameAuthorMode, @"Mouse Button"), userInfo[WLMouseAuthorUserInfoName]];
 		[[_view effectView] drawButton:[[theEvent trackingArea] rect] withMessage:buttonTitle];
 	}
 	_manager.activeTrackingAreaUserInfo = userInfo;
@@ -61,21 +61,21 @@ NSString *const WLMenuTitleAddAsFriend = @"Add %@ as friend";
 #pragma mark Contextual Menu
 - (IBAction)authorInfo:(id)sender {
 	NSDictionary *userInfo = [sender representedObject];
-	NSString *author = [userInfo objectForKey:WLMouseAuthorUserInfoName];
+	NSString *author = userInfo[WLMouseAuthorUserInfoName];
 	NSString *commandSequence = [NSString stringWithFormat:FBCommandSequenceAuthorInfo, author];
 	[_view sendText:commandSequence];
 }
 
 - (IBAction)addAsFriend:(id)sender {
 	NSDictionary *userInfo = [sender representedObject];
-	NSString *author = [userInfo objectForKey:WLMouseAuthorUserInfoName];
+	NSString *author = userInfo[WLMouseAuthorUserInfoName];
 	NSString *commandSequence = [NSString stringWithFormat:FBCommandSequenceAddAuthorAsFriend, author];
 	[_view sendText:commandSequence];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
-	NSMenu *menu = [[[NSMenu alloc] init] autorelease];
-	NSString *author = [_manager.activeTrackingAreaUserInfo objectForKey:WLMouseAuthorUserInfoName];
+	NSMenu *menu = [[NSMenu alloc] init];
+	NSString *author = (_manager.activeTrackingAreaUserInfo)[WLMouseAuthorUserInfoName];
 	if (author == nil)
 		return nil;
 	
@@ -104,8 +104,8 @@ NSString *const WLMenuTitleAddAsFriend = @"Add %@ as friend";
 			   length:(int)length {
 	NSRect rect = [_view rectAtRow:row column:column height:1 width:length];
 	// Generate User Info
-	NSArray *keys = [NSArray arrayWithObjects: WLMouseHandlerUserInfoName, WLMouseAuthorUserInfoName, nil];
-	NSArray *objects = [NSArray arrayWithObjects: self, author, nil];
+	NSArray *keys = @[WLMouseHandlerUserInfoName, WLMouseAuthorUserInfoName];
+	NSArray *objects = @[self, author];
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 	// Add into manager
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo]];

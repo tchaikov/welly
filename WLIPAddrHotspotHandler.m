@@ -32,7 +32,7 @@
 #pragma mark -
 #pragma mark Generate User Info
 - (NSDictionary *)userInfo {
-	return [NSDictionary dictionaryWithObject:self forKey:WLMouseHandlerUserInfoName];
+	return @{WLMouseHandlerUserInfoName: self};
 }
 
 #pragma mark -
@@ -44,7 +44,7 @@
 	/* ip tooltip */
 	NSRect rect = [_view rectAtRow:r column:c height:1 width:length];
 	NSString *tooltip = [[IPSeeker shared] getLocation:ip];
-	[_view addToolTipRect:rect owner:_manager userData:tooltip];
+	[_view addToolTipRect:rect owner:_manager userData:(__bridge void *)(tooltip)];
 	
 	NSDictionary *userInfo = [self userInfo];
 	[_trackingAreas addObject:[_manager addTrackingAreaWithRect:rect userInfo:userInfo]];
@@ -147,6 +147,6 @@
   stringForToolTip:(NSToolTipTag)tag 
 			 point:(NSPoint)point 
 		  userData:(void *)userData {
-	return (NSString *)userData;
+	return (__bridge NSString *)userData;
 }
 @end

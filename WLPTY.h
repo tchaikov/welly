@@ -12,12 +12,12 @@
 @interface WLPTY : NSObject <WLProtocol> {
     pid_t _pid;
     int _fd;
-    id _delegate;
+    id __unsafe_unretained _delegate;
     BOOL _connecting;
     WLProxyType _proxyType;
     NSString *_proxyAddress;
 }
-@property (readwrite, assign) id delegate;
+@property (readwrite, unsafe_unretained) id delegate;
 @property (readwrite, assign) WLProxyType proxyType;
 @property (readwrite, copy) NSString *proxyAddress;
 @end

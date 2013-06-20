@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "WLMainFrameController.h"
 
+
 @interface WLMainFrameController (TabControl)
 
 - (void)initializeTabControl;

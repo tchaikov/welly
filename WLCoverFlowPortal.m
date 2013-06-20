@@ -34,11 +34,6 @@ const float xscale = 1, yscale = 0.8;
 
 //@synthesize view = _imageFlowView;
 
-- (void)dealloc {
-	if (_portalItems)
-		[_portalItems release];
-    [super dealloc];
-}
 
 - (id)initWithFrame:(NSRect)frame {
 	if ((self = [super initWithFrame:frame])) {
@@ -106,15 +101,13 @@ const float xscale = 1, yscale = 0.8;
 }
 
 - (void)setPortalItems:(NSArray *)portalItems {
-	if (_portalItems)
-		[_portalItems release];
 	
 	_portalItems = [portalItems copy];
 	[self refresh];
 }
 
 - (void)select {
-	WLPortalItem *item = [_portalItems objectAtIndex:[_imageFlowView selectedIndex]];
+	WLPortalItem *item = _portalItems[[_imageFlowView selectedIndex]];
 	[item didSelect:self];
 }
 
@@ -135,7 +128,7 @@ const float xscale = 1, yscale = 0.8;
 }
 
 - (id)imageFlow:(id)aFlow itemAtIndex:(NSUInteger)index {
-	return [_portalItems objectAtIndex:index];
+	return _portalItems[index];
 }
 
 #pragma mark -
@@ -173,7 +166,7 @@ const float xscale = 1, yscale = 0.8;
     if (index == NSNotFound || [_portalItems count] <= index)
         return nil;
 	
-    return [_portalItems objectAtIndex:index];
+    return _portalItems[index];
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {

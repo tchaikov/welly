@@ -35,11 +35,11 @@
 
 @interface WLPortalItem : NSObject <WLPortalSource> {
     NSString *_title;
-    NSImage  *_image;
+    NSImage  *__weak _image;
 }
 
 @property (readonly) NSString *imageTitle;
-@property (readonly) NSImage *image;
+@property (weak, readonly) NSImage *image;
 
 - (id)initWithTitle:(NSString *)title;
 - (id)initWithImage:(NSImage *)theImage;

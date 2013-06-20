@@ -46,7 +46,6 @@ static NSCursor *gMoveCursor = nil;
     [path stroke];
     [cursorImage unlockFocus];
     gMoveCursor = [[NSCursor alloc] initWithImage: cursorImage hotSpot: NSMakePoint(5.5, 9.5)];
-    [cursorImage release];
 }
 
 - (id)init {
@@ -205,7 +204,7 @@ static NSCursor *gMoveCursor = nil;
 	BBSState bbsState = [[_view frontMostTerminal] bbsState];
 	if (bbsState.state == BBSComposePost) {
 		[_trackingAreas addObject:[_manager addTrackingAreaWithRect:[_view frame]
-														   userInfo:[NSDictionary dictionaryWithObject:self forKey:WLMouseHandlerUserInfoName] 
+														   userInfo:@{WLMouseHandlerUserInfoName: self} 
 															 cursor:gMoveCursor]];
 	}
 }
