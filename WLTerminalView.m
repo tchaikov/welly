@@ -83,7 +83,6 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
     return self;
 }
 
-
 #pragma mark -
 #pragma mark Conversion
 
@@ -213,108 +212,106 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
     NSArray *types = [pb types];
     if (![types containsObject:NSStringPboardType]) return;
 
-    @autoreleasepool {
-        NSString *str = [pb stringForType:NSStringPboardType];
-        const int LINE_WIDTH = 66, LPADDING = 4;
-        WLIntegerArray *word = [WLIntegerArray integerArray];
-        WLIntegerArray *text = [WLIntegerArray integerArray];
-        int word_width = 0, line_width = 0;
-        [text push_back:0x000d];
-        for (int j = 0; j < LPADDING; j++)
-            [text push_back:0x0020];
-        line_width = LPADDING;
-        for (int i = 0; i < [str length]; i++) {
-            unichar c = [str characterAtIndex:i];
-            if (c == 0x0020 || c == 0x0009) { // space
-                for (int j = 0; j < [word size]; j++)
-                    [text push_back:[word at:j]];
-                [word clear];
-                line_width += word_width;
-                word_width = 0;
-                if (line_width >= LINE_WIDTH + LPADDING) {
-                    [text push_back:0x000d];
-                    for (int j = 0; j < LPADDING; j++)
-                        [text push_back:0x0020];
-                    line_width = LPADDING;
-                }
-                int repeat = (c == 0x0020) ? 1 : 4;
-                for (int j = 0; j < repeat ; j++)
-                    [text push_back:0x0020];
-                line_width += repeat;
-            } else if (c == 0x000a || c == 0x000d) {
-                for (int j = 0; j < [word size]; j++)
-                    [text push_back:[word at:j]];
-                [word clear];
-                [text push_back:0x000d];
-                for (int j = 0; j < LPADDING; j++)
-                    [text push_back:0x0020];
-                line_width = LPADDING;
-                word_width = 0;
-            } else if (c > 0x0020 && c < 0x0100) {
-                [word push_back:c];
-                word_width++;
-                if (c >= 0x0080) word_width++;
-            } else if (c >= 0x1000){
-                for (int j = 0; j < [word size]; j++)
-                    [text push_back:[word at:j]];
-                [word clear];
-                line_width += word_width;
-                word_width = 0;
-                if (line_width >= LINE_WIDTH + LPADDING) {
-                    [text push_back:0x000d];
-                    for (int j = 0; j < LPADDING; j++)
-                        [text push_back:0x0020];
-                    line_width = LPADDING;
-                }
-                [text push_back:c];
-                line_width += 2;
-            } else {
-                [word push_back:c];
-            }
-
-            // the word is too long
-            if (word_width > LINE_WIDTH) {
-                int acc_width = 0;
-                while (![word empty]) {
-                    int w = ([word front] < 0x0080) ? 1 : 2;
-                    if (acc_width + w <= LINE_WIDTH) {
-                        [text push_back:[word front]];
-                        acc_width += w;
-                        [word pop_front];
-                    } else {
-                        [text push_back:0x000d];
-                        for (int j = 0; j < LPADDING; j++)
-                            [text push_back:0x0020];
-                        line_width = LPADDING;
-                        word_width -= acc_width;
-                        break;
-                    }
-                }
-            }
-            assert(word_width <= LINE_WIDTH);
-
-            // the tailing word is too long
-            if (line_width + word_width > LINE_WIDTH + LPADDING) {
+    NSString *str = [pb stringForType:NSStringPboardType];
+    const int LINE_WIDTH = 66, LPADDING = 4;
+    WLIntegerArray *word = [WLIntegerArray integerArray];
+    WLIntegerArray *text = [WLIntegerArray integerArray];
+    int word_width = 0, line_width = 0;
+    [text push_back:0x000d];
+    for (int j = 0; j < LPADDING; j++)
+        [text push_back:0x0020];
+    line_width = LPADDING;
+    for (int i = 0; i < [str length]; i++) {
+        unichar c = [str characterAtIndex:i];
+        if (c == 0x0020 || c == 0x0009) { // space
+            for (int j = 0; j < [word size]; j++)
+                [text push_back:[word at:j]];
+            [word clear];
+            line_width += word_width;
+            word_width = 0;
+            if (line_width >= LINE_WIDTH + LPADDING) {
                 [text push_back:0x000d];
                 for (int j = 0; j < LPADDING; j++)
                     [text push_back:0x0020];
                 line_width = LPADDING;
             }
+            int repeat = (c == 0x0020) ? 1 : 4;
+            for (int j = 0; j < repeat ; j++)
+                [text push_back:0x0020];
+            line_width += repeat;
+        } else if (c == 0x000a || c == 0x000d) {
+            for (int j = 0; j < [word size]; j++)
+                [text push_back:[word at:j]];
+            [word clear];
+            [text push_back:0x000d];
+            for (int j = 0; j < LPADDING; j++)
+                [text push_back:0x0020];
+            line_width = LPADDING;
+            word_width = 0;
+        } else if (c > 0x0020 && c < 0x0100) {
+            [word push_back:c];
+            word_width++;
+            if (c >= 0x0080) word_width++;
+        } else if (c >= 0x1000){
+            for (int j = 0; j < [word size]; j++)
+                [text push_back:[word at:j]];
+            [word clear];
+            line_width += word_width;
+            word_width = 0;
+            if (line_width >= LINE_WIDTH + LPADDING) {
+                [text push_back:0x000d];
+                for (int j = 0; j < LPADDING; j++)
+                    [text push_back:0x0020];
+                line_width = LPADDING;
+            }
+            [text push_back:c];
+            line_width += 2;
+        } else {
+            [word push_back:c];
         }
 
-        while (![word empty]) {
-            [text push_back:[word front]];
-            [word pop_front];
+        // the word is too long
+        if (word_width > LINE_WIDTH) {
+            int acc_width = 0;
+            while (![word empty]) {
+                int w = ([word front] < 0x0080) ? 1 : 2;
+                if (acc_width + w <= LINE_WIDTH) {
+                    [text push_back:[word front]];
+                    acc_width += w;
+                    [word pop_front];
+                } else {
+                    [text push_back:0x000d];
+                    for (int j = 0; j < LPADDING; j++)
+                        [text push_back:0x0020];
+                    line_width = LPADDING;
+                    word_width -= acc_width;
+                    break;
+                }
+            }
         }
+        assert(word_width <= LINE_WIDTH);
 
-        unichar *carray = (unichar *)malloc(sizeof(unichar) * [text size]);
-        for (int i = 0; i < [text size]; i++)
-            carray[i] = [text at:i];
-        NSString *mStr = [NSString stringWithCharacters:carray length:[text size]];
-        free(carray);
-        //[self insertText:mStr withDelay:100];		
-        [self insertText:mStr withDelay:0];
+        // the tailing word is too long
+        if (line_width + word_width > LINE_WIDTH + LPADDING) {
+            [text push_back:0x000d];
+            for (int j = 0; j < LPADDING; j++)
+                [text push_back:0x0020];
+            line_width = LPADDING;
+        }
     }
+
+    while (![word empty]) {
+        [text push_back:[word front]];
+        [word pop_front];
+    }
+
+    unichar *carray = (unichar *)malloc(sizeof(unichar) * [text size]);
+    for (int i = 0; i < [text size]; i++)
+        carray[i] = [text at:i];
+    NSString *mStr = [NSString stringWithCharacters:carray length:[text size]];
+    free(carray);
+    //[self insertText:mStr withDelay:100];
+    [self insertText:mStr withDelay:0];
 }
 
 - (void)performPasteColor {
@@ -588,13 +585,13 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 
 - (void)keyDown:(NSEvent *)theEvent {
     [[self frontMostConnection] resetMessageCount];
-    
+
     if (theEvent.characters.length == 0) {
         // dead key pressed
         return;
     }
-	
-    unichar c = [theEvent.characters characterAtIndex:0];
+
+    unichar c = [[theEvent characters] characterAtIndex:0];
 	// URL
 	if(_isInUrlMode) {
 		BOOL shouldExit;
@@ -631,7 +628,7 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
     WLTerminal *ds = [self frontMostTerminal];
 
     if ((theEvent.modifierFlags & NSControlKeyMask) &&
-	   ((theEvent.modifierFlags & NSAlternateKeyMask) == 0 )) {
+        ((theEvent.modifierFlags & NSAlternateKeyMask) == 0 )) {
         buf[0] = c;
         [[self frontMostConnection] sendBytes:buf length:1];
         return;
@@ -670,7 +667,6 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
             [[self frontMostConnection] sendBytes:buf length:1];
         return;
 	}
-
 	[self interpretKeyEvents:@[theEvent]];
 }
 
@@ -703,30 +699,26 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 #pragma mark -
 #pragma mark Drawing
 - (void)drawRect:(NSRect)rect {
-    @autoreleasepool {
-		[super drawRect:rect];
-		if ([self isConnected]) {
+	[super drawRect:rect];
+	if ([self isConnected]) {
         /* Draw the selection */
         if (_selectionLength != 0) 
             [self drawSelection];
-		}
-	
-    }
+	}
 }
 
 - (void)drawSelection {
-    @autoreleasepool {
-        int location, length;
-        if (_selectionLength >= 0) {
-            location = _selectionLocation;
-            length = _selectionLength;
-        } else {
-            location = _selectionLocation + _selectionLength;
-            length = 0 - (int)_selectionLength;
-        }
-        int x = location % _maxColumn;
-        int y = location / _maxColumn;
-        [[NSColor colorWithCalibratedRed: 0.6 green: 0.9 blue: 0.6 alpha: 0.4] set];
+    int location, length;
+    if (_selectionLength >= 0) {
+        location = _selectionLocation;
+        length = _selectionLength;
+    } else {
+        location = _selectionLocation + _selectionLength;
+        length = 0 - (int)_selectionLength;
+    }
+    int x = location % _maxColumn;
+    int y = location / _maxColumn;
+    [[NSColor colorWithCalibratedRed: 0.6 green: 0.9 blue: 0.6 alpha: 0.4] set];
 
 	if (_hasRectangleSelected) {
 		// Rectangle
@@ -749,7 +741,6 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 			y++;
 		}
 	}
-    }
 }
 
 #pragma mark -
@@ -858,15 +849,11 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 		 withDelay:(int)microsecond {
 	if (![self frontMostConnection] || ![[self frontMostConnection] isConnected])
 		return;
-	
-    @autoreleasepool {
-    
+
     [_textField setHidden:YES];
     _markedText = nil;
 	
     [[self frontMostConnection] sendText:aString withDelay:microsecond];
-
-    }
 }
 
 - (void)doCommandBySelector:(SEL)aSelector {
@@ -1116,9 +1103,9 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 		}
 	} else if ([attribute isEqual:NSAccessibilityNumberOfCharactersAttribute]) {
 		if (_selectionLength != 0) {
-			return [NSNumber numberWithUnsignedInteger:_selectionLength];
+			return @((NSUInteger)_selectionLength);
 		} else {
-			return @([self rangeForWordAtPoint:[self mouseLocationInView]].length);
+            return @([self rangeForWordAtPoint:[self mouseLocationInView]].length);;
 		}
 	}
 	return nil;

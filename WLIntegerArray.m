@@ -11,32 +11,32 @@
 
 @implementation WLIntegerArray
 
-+ integerArray {
++ (instancetype)integerArray {
     return [[WLIntegerArray alloc] init];
 }
 
-- (id)init {
+- (instancetype)init {
     if (self = [super init]) {
-        [self clear];
+        _array = [NSMutableArray array];
     }
     return self;
 }
 
 
 - (void)push_back:(NSInteger)integer {
-    [_array addPointer:(void *)integer];
+    [_array addObject:@(integer)];
 }
 
 - (void)pop_front {
-    [_array removePointerAtIndex:0];
+    [_array removeObjectAtIndex:0];
 }
 
 - (NSInteger)at:(NSUInteger)index {
-    return (NSInteger)[_array pointerAtIndex:index];
+    return [_array[index] integerValue];
 }
 
 - (void)set:(NSInteger)value at:(NSUInteger)index {
-    [_array replacePointerAtIndex:index withPointer:(void *)value];
+    _array[index] = @(value);
 }
 
 - (NSInteger)front {
@@ -52,7 +52,7 @@
 }
 
 - (void)clear {
-    _array = [NSPointerArray weakObjectsPointerArray];
+    [_array removeAllObjects];
 }
 
 @end

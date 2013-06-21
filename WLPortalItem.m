@@ -12,26 +12,26 @@
 static NSImage *default_image;
 
 @implementation WLPortalItem
-@synthesize imageTitle = _title;
-@synthesize image = _image;
+
 #pragma mark -
 #pragma mark Initialize
-- (id)initWithTitle:(NSString *)title {
+
+- (instancetype)initWithTitle:(NSString *)title {
 	if (self = [super init]) {
 		_title = [title copy];
 	}
 	return self;
 }
 
-- (id)initWithImage:(NSImage *)theImage{
+- (instancetype)initWithImage:(NSImage *)theImage{
 	if (self = [super init]) {
 		_image = theImage;
 	}
 	return self;
 }
 
-- (id)initWithImage:(NSImage *)theImage 
-			  title:(NSString *)title {
+- (instancetype)initWithImage:(NSImage *)theImage
+                        title:(NSString *)title {
 	if (self = [super init]) {
 		_image = theImage;
 		_title = [title copy];
@@ -57,10 +57,6 @@ static NSImage *default_image;
         return default_image;
     }
     return _image;
-}
-
-- (NSString*)imageTitle {
-    return _title;
 }
 
 #pragma mark -

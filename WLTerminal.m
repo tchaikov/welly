@@ -150,7 +150,6 @@
 
 - (NSString *)stringAtIndex:(int)begin 
 					 length:(int)length {
-    int i, j;
     //unichar textBuf[length + 1];
     unichar firstByte = 0;
     int bufLength = 0;
@@ -158,7 +157,7 @@
 	if (begin + length > _maxRow * _maxColumn) {
 		length = _maxRow * _maxColumn - begin;
 	}
-    for (i = begin; i < begin + length; i++) {
+    for (int i = begin; i < begin + length; i++) {
         int x = i % _maxColumn;
         int y = i / _maxColumn;
         if (x == 0 && i != begin && i - 1 < begin + length) { // newline
@@ -173,7 +172,7 @@
             if (_grid[y][x].byte == '\0' || _grid[y][x].byte == ' ')
                 spacebuf++;
             else {
-                for (j = 0; j < spacebuf; j++)
+                for (int j = 0; j < spacebuf; j++)
                     _textBuf[bufLength++] = ' ';
                 _textBuf[bufLength++] = _grid[y][x].byte;
                 spacebuf = 0;
@@ -182,7 +181,7 @@
             firstByte = _grid[y][x].byte;
         } else if (db == 2 && firstByte) {
             int index = (firstByte << 8) + _grid[y][x].byte - 0x8000;
-            for (j = 0; j < spacebuf; j++)
+            for (int j = 0; j < spacebuf; j++)
                 _textBuf[bufLength++] = ' ';
             _textBuf[bufLength++] = [WLEncoder toUnicode:index encoding:[[[self connection] site] encoding]];
 			

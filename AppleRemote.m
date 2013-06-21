@@ -72,7 +72,7 @@ const char* AppleRemoteDeviceName = "AppleIRController";
 		_cookieToButtonMapping[@"31_19_18_3_2_"] = @(kRemoteButtonLeft_Hold);
 		_cookieToButtonMapping[@"31_19_18_31_19_18_"] = @(kRemoteButtonMenu_Hold);
 		_cookieToButtonMapping[@"35_31_19_18_35_31_19_18_"] = @(kRemoteButtonPlay_Hold);
-		_cookieToButtonMapping[@"19_"] = @(kRemoteControl_Switched);	
+		_cookieToButtonMapping[@"19_"] = @(kRemoteControl_Switched);
 	} else {
 		// 10.6.x Snow Leopard
 		_cookieToButtonMapping[@"33_31_30_21_20_2_"] = @(kRemoteButtonPlus);

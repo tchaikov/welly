@@ -35,8 +35,8 @@
 @property (readwrite, assign) WLProxyType proxyType;
 @property (readwrite, copy) NSString *proxyAddress;
 
-+ (WLSite *)site;
-+ (WLSite *)siteWithDictionary:(NSDictionary *)d;
++ (instancetype)site;
++ (instancetype)siteWithDictionary:(NSDictionary *)d;
 - (NSDictionary *)dictionaryOfSite ;
 
 - (BOOL)isDummy;

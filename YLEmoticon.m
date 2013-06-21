@@ -10,12 +10,11 @@
 
 
 @implementation YLEmoticon
-@synthesize name = _name;
-@synthesize content = _content;
 
 #pragma mark -
 #pragma mark init and dealloc
-- (id)init {
+
+- (instancetype)init {
     if (self = [super init]) {
         [self setContent: @":)"];
 		//        [self setName: @"smile"];
@@ -24,7 +23,7 @@
 }
 
 
-- (id)initWithName:(NSString *)name 
+- (instancetype)initWithName:(NSString *)name
 		   content:(NSString *)content {
 	if (self = [self init]) {
 		//_name = name;

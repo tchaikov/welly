@@ -32,8 +32,8 @@
 	
     enum { TP_NORMAL, TP_ESCAPE, TP_CONTROL, TP_SCS } _state;
 	
-    NSMutableArray *_csBuf;
-    NSMutableArray *_csArg;
+    WLIntegerArray *_csBuf;
+    WLIntegerArray *_csArg;
     unsigned int _csTemp;
 	
     int _scrollBeginRow;

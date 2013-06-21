@@ -22,22 +22,14 @@
 @end
 
 @interface WLTerminal : NSObject {	
-	WLBBSType _bbsType;
 	
-    unsigned int _maxRow;
-    unsigned int _maxColumn;
-    unsigned int _cursorColumn;
-    unsigned int _cursorRow;
     unsigned int _offset;
 	
     cell **_grid;
     BOOL **_dirty;
 
 	NSMutableSet *_observers;
-
     WLConnection *__weak _connection;
-	
-	BBSState _bbsState;
 	
 	unichar *_textBuf;
 }

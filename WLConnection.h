@@ -24,7 +24,7 @@
 
     BOOL _connected;
 
-    NSDate *_lastTouchDate;
+    NSDate *__weak _lastTouchDate;
     
     WLTerminal *_terminal;
 	WLTerminalFeeder *_feeder;

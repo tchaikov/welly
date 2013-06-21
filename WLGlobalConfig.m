@@ -41,6 +41,7 @@ NSString *const WLEnglishFontSizeKeyName = @"EnglishFontSize";
 @end
 
 @implementation NSUserDefaults(myColorSupport)
+
 - (void)setMyColor:(NSColor *)aColor 
 			forKey:(NSString *)aKey {
     NSData *theData=[NSArchiver archivedDataWithRootObject:aColor];
@@ -48,12 +49,13 @@ NSString *const WLEnglishFontSizeKeyName = @"EnglishFontSize";
 }
 
 - (NSColor *)myColorForKey:(NSString *)aKey {
-    NSColor *theColor=nil;
+    NSColor *theColor = nil;
     NSData *theData=[self dataForKey:aKey];
     if (theData != nil)
         theColor=(NSColor *)[NSUnarchiver unarchiveObjectWithData:theData];
     return theColor;
 }
+
 @end
 
 @implementation WLGlobalConfig
@@ -81,9 +83,8 @@ NSString *const WLEnglishFontSizeKeyName = @"EnglishFontSize";
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 
-- (id)init {
-	self = [super init];
-	if (self) {
+- (instancetype)init {
+	if (self = [super init]) {
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		
 		[self setShowsHiddenText:[defaults boolForKey:@"ShowHiddenText"]];
@@ -195,7 +196,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 }
 
 - (void)refreshFont {
-    int i, j;
     
     if (_cCTFont) 
 		CFRelease(_cCTFont);
@@ -210,8 +210,8 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 		CFRelease(_eCGFont);
     _eCGFont = CTFontCopyGraphicsFont(_eCTFont, NULL);
     
-    for (i = 0; i < NUM_COLOR; i++) 
-        for (j = 0; j < 2; j++) {
+    for (int i = 0; i < NUM_COLOR; i++)
+        for (int j = 0; j < 2; j++) {
             int zero = 0;
             CFNumberRef number = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &zero);
             CFStringRef cfKeys[] = {kCTFontAttributeName, kCTForegroundColorAttributeName, kCTLigatureAttributeName};
@@ -235,7 +235,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
                                                      &kCFTypeDictionaryValueCallBacks);
             CFRelease(number);
         }
-    
 }
 
 #pragma mark -
@@ -575,22 +574,25 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 
 - (NSSize)contentSize {
 	// Return the proper size of all the content
-	return NSMakeSize(_column * [self cellWidth], _row * [self cellHeight]);
+	return NSMakeSize(_column * self.cellWidth, _row * self.cellHeight);
 }
 
 #pragma mark -
 #pragma mark Restoring Settrings
 - (void)restoreSettings {
-	[self setCellWidth:12];
-	[self setCellHeight:24];
-	[self setChineseFontName:@"STHeiti"];
-	[self setEnglishFontName:@"Monaco"];
-	[self setChineseFontSize:22];
-	[self setEnglishFontSize:18];
+	self.cellWidth = 12;
+	self.cellHeight = 24;
+	self.chineseFontName = @"STHeiti";
+	self.englishFontName = @"Monaco";
+	self.chineseFontSize = 22;
+	self.englishFontSize = 18;
 }
 
 - (NSDictionary *)sizeParameters {
-	return @{WLCellWidthKeyName:@(_cellWidth), WLCellHeightKeyName:@(_cellHeight), WLChineseFontSizeKeyName:@(_chineseFontSize), WLEnglishFontSizeKeyName:@(_englishFontSize)};
+	return @{WLCellWidthKeyName:@(_cellWidth),
+             WLCellHeightKeyName:@(_cellHeight),
+             WLChineseFontSizeKeyName:@(_chineseFontSize),
+             WLEnglishFontSizeKeyName:@(_englishFontSize)};
 }
 
 - (void)setSizeParameters:(NSDictionary *)sizeParameters {

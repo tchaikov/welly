@@ -37,9 +37,8 @@ NSString *const WLDefaultSiteName = @"DefaultSiteName";
 @synthesize proxyType = _proxyType;
 @synthesize proxyAddress = _proxyAddress;
 
-- (id)init {
-	self = [super init];
-    if (self) {
+- (instancetype)init {
+    if (self = [super init]) {
         [self setName:NSLocalizedString(WLDefaultSiteName, @"Site")];
 
         [self setAddress:@""];
@@ -56,11 +55,11 @@ NSString *const WLDefaultSiteName = @"DefaultSiteName";
     return self;
 }
 
-+ (WLSite *)site {
++ (instancetype)site {
     return [WLSite new];
 }
 
-+ (WLSite *)siteWithDictionary:(NSDictionary *)d {
++ (instancetype)siteWithDictionary:(NSDictionary *)d {
     WLSite *s = [WLSite site];
     [s setName:[d valueForKey:YLSiteNameAttributeName] ?: @""];
     [s setAddress:[d valueForKey:YLSiteAddressAttributeName] ?: @""];

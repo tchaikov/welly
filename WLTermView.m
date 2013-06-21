@@ -621,9 +621,11 @@ static NSImage *gLeftImage;
 - (void)updateBackgroundForRow:(int)r 
 						  from:(int)start 
 							to:(int)end {
-	int c;
 	cell *currRow = [[self frontMostTerminal] cellsOfRow:r];
-	NSRect rowRect = NSMakeRect(start * _fontWidth, (_maxRow - 1 - r) * _fontHeight, (end - start) * _fontWidth, _fontHeight);
+	NSRect rowRect = NSMakeRect(start * _fontWidth,
+                                (_maxRow - 1 - r) * _fontHeight,
+                                (end - start) * _fontWidth,
+                                _fontHeight);
 	
 	attribute currAttr, lastAttr = (currRow + start)->attr;
 	int length = 0;
@@ -655,7 +657,7 @@ static NSImage *gLeftImage;
 	 We don't have to reduce the number of fillRect. We should reduce the number of pixels it draws.
 	 Obviously, the current method draws less pixels than the second one. So it's optimized already!
 	 */
-	for (c = start; c <= end; c++) {
+	for (int c = start; c <= end; c++) {
 		if (c < end) {
 			currAttr = (currRow + c)->attr;
 			currentBackgroundColor = bgColorIndexOfAttribute(currAttr);

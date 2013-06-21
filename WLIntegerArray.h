@@ -10,10 +10,10 @@
 
 // simulate std::deque for legacy code
 @interface WLIntegerArray : NSObject {
-    NSPointerArray *_array;
+    NSMutableArray *_array;
 }
 
-+ integerArray;
++ (instancetype)integerArray;
 
 - (void)push_back:(NSInteger)integer;
 - (void)pop_front;
