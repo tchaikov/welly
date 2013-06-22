@@ -10,17 +10,16 @@
 #import "CommonType.h"
 
 @class WLConnection;
-@interface WLMessageDelegate : NSObject {
-	WLConnection *_connection;
+
+@interface WLMessageDelegate : NSObject<NSUserNotificationCenterDelegate> {
 	NSMutableString *_unreadMessage;
-	int _unreadCount;
+    NSUserNotificationCenter *_ncenter;
 }
-@property (readonly) int unreadCount;
 
-- (id)initWithConnection:(WLConnection *)connection;
+@property (readonly) NSUInteger unreadCount;
 
-- (void)setConnection:(WLConnection *)connection;
-- (void)connectionDidReceiveNewMessage:(NSString *)message
-							fromCaller:(NSString *)callerName;
+- (void)connection:(WLConnection *)connection
+ didReceiveMessage:(NSString *)message
+        fromCaller:(NSString *)callerName;
 - (void)showUnreadMessagesOnTextView:(NSTextView *)textView;
 @end

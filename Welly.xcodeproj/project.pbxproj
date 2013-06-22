@@ -103,6 +103,8 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		945C31AE1775ED650032DEE0 /* DownloadItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 945C31AD1775ED650032DEE0 /* DownloadItem.m */; };
+		9473BF7417760F8E00D31AF5 /* WLTerminalView+QuickLook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */; };
 		94A3C9B71773471100B5A498 /* PSMTabBarControl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8540F7240CEB43FF003B17D1 /* PSMTabBarControl.framework */; };
 		D64A480B11E90350008ACEBD /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D64A480A11E90350008ACEBD /* Growl.framework */; };
 		D64A480E11E90356008ACEBD /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D64A480A11E90350008ACEBD /* Growl.framework */; };
@@ -301,6 +303,10 @@
 		85F7F2070B06EE36000C4CDF /* WLGlobalConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLGlobalConfig.h; sourceTree = "<group>"; };
 		85F7F2080B06EE36000C4CDF /* WLGlobalConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLGlobalConfig.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		945C31AC1775ED650032DEE0 /* DownloadItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadItem.h; sourceTree = "<group>"; };
+		945C31AD1775ED650032DEE0 /* DownloadItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadItem.m; sourceTree = "<group>"; };
+		9473BF7217760F8E00D31AF5 /* WLTerminalView+QuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WLTerminalView+QuickLook.h"; sourceTree = "<group>"; };
+		9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WLTerminalView+QuickLook.m"; sourceTree = "<group>"; };
 		D64A480A11E90350008ACEBD /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -663,6 +669,10 @@
 				1631E84D0E2C8D5600B87A38 /* WLPreviewController.m */,
 				1631E8210E2C674300B87A38 /* WLQuickLookBridge.h */,
 				1631E81F0E2C672700B87A38 /* WLQuickLookBridge.m */,
+				945C31AC1775ED650032DEE0 /* DownloadItem.h */,
+				945C31AD1775ED650032DEE0 /* DownloadItem.m */,
+				9473BF7217760F8E00D31AF5 /* WLTerminalView+QuickLook.h */,
+				9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */,
 			);
 			name = "Quick Look";
 			sourceTree = "<group>";
@@ -851,7 +861,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9473BF7417760F8E00D31AF5 /* WLTerminalView+QuickLook.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				945C31AE1775ED650032DEE0 /* DownloadItem.m in Sources */,
 				8570AD5F0A3923A900838442 /* WLTerminalView.m in Sources */,
 				85145AAE0AB40192009FC710 /* WLTerminal.m in Sources */,
 				85F7F2090B06EE36000C4CDF /* WLGlobalConfig.m in Sources */,

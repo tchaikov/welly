@@ -32,6 +32,10 @@
 	WLCoverFlowPortal *_portal;
 }
 
+@property (readonly) NSView *frontMostView;
+@property (readonly) WLConnection *frontMostConnection;
+@property (readonly) WLTerminal *frontMostTerminal;
+
 // for Font size
 - (IBAction)increaseFontSize:(id)sender;
 - (IBAction)decreaseFontSize:(id)sender;
@@ -40,8 +44,5 @@
 					   label:(NSString *)theLabel;
 - (void)newTabWithCoverFlowPortal;
 
-- (NSView *)frontMostView;
-- (WLConnection *)frontMostConnection;
-- (WLTerminal *)frontMostTerminal;
 
 @end

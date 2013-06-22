@@ -7,31 +7,10 @@
 //
 
 #import "WLQuickLookBridge.h"
+#import "DownloadItem.h"
 
 @interface WLQuickLookBridge (WLQuickLookBridgeSingleton)
 + (WLQuickLookBridge *)sharedInstance;
-@end
-
-@interface QLPreviewPanel : NSPanel
-+ (id)sharedPreviewPanel;
-- (void)close;
-- (void)makeKeyAndOrderFrontWithEffect:(int)flag canClose:(BOOL)canClose;
-// 10.5 only
-- (void)setURLs:(NSArray *)URLs currentIndex:(NSUInteger)index preservingDisplayState:(BOOL)flag;
-- (void)setEnableDragNDrop:(BOOL)flag;
-// 10.6 and above
-@property(readonly) id currentController;
-@property NSInteger currentPreviewItemIndex;
-- (void)updateController;
-- (id)sharedPreviewView;
-- (void)reloadDataPreservingDisplayState:(BOOL)flag;
-@end
-
-@interface QLPreviewView : NSView
-- (void)setEnableDragNDrop:(BOOL)flag;
-- (BOOL)enableDragNDrop;
-- (void)setDelegate:(id)delegate;
-- (void)setAutomaticallyMakePreviewFirstResponder:(BOOL)arg1;
 @end
 
 @interface QLPreviewPanelController : NSWindowController
@@ -57,38 +36,44 @@ static BOOL isLion;
     isLion = (NSAppKitVersionNumber >= NSAppKitVersionNumber10_7);
 }
 
-- (id)init {
-	self = [super init];
-	if (self) {
-		_URLs = [[NSMutableArray alloc] init];
-		// 10.5: /System/Library/PrivateFrameworks/QuickLookUI.framework
-		// 10.6: /System/Library/Frameworks/Quartz.framework/Frameworks/QuickLookUI.framework
-		// 10.7: /System/Library/Frameworks/Quartz.framework/Frameworks/QuickLookUI.framework
-		[[NSBundle bundleWithPath:@"/System/Library/…/QuickLookUI.framework"] load];
-		_panel = [NSClassFromString(@"QLPreviewPanel") sharedPreviewPanel];
+- (instancetype)init {
+	if (self = [super init]) {
+		_downloads = [NSMutableArray array];
+        _currentItemIndex = -1;
 		// To deal with full screen window level
 		// Modified by gtCarrera
 		//[_panel setLevel:kCGStatusWindowLevel+1];
 		// End
-		id controller = [_panel windowController];
-		[controller setDelegate:self];
-		if (isLeopard) {
-			[_panel setEnableDragNDrop:YES];
-		} else {
-			[_panel setDataSource:self];
-			QLPreviewView *view = [controller previewView];
-			[view setEnableDragNDrop:YES];
-			//[view setAutomaticallyMakePreviewFirstResponder:YES];
-			[view setDelegate:self];
-		}
 	}
     return self;
 }
 
+- (void)showPreviewPanel {
+    if ([QLPreviewPanel sharedPreviewPanelExists] && [[QLPreviewPanel sharedPreviewPanel] isVisible]) {
+        return;
+    }
+    _previewPanel = [QLPreviewPanel sharedPreviewPanel];
+    [_previewPanel makeKeyAndOrderFront:nil];
+}
 
-// delegate for QLPreviewPanel
-// zoom effect from the current mouse coordinates
-- (NSRect)previewPanel:(NSPanel*)panel frameForURL:(NSURL*)URL {
+#pragma mark -
+#pragma mark QLPreviewPanelDelegate
+
+- (BOOL)previewPanel:(QLPreviewPanel *)panel handleEvent:(NSEvent *)event
+{
+    if ([event type] == NSKeyDown) {
+        return YES;
+    }
+    return NO;
+}
+
+// This delegate method provides the rect on screen from which the panel will zoom.
+- (NSRect)previewPanel:(QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem:(id <QLPreviewItem>)item
+{
+    NSInteger index = [_downloads indexOfObject:item];
+    if (index == NSNotFound) {
+        return NSZeroRect;
+    }
     NSRect frame;
     frame.origin = [NSEvent mouseLocation];
     frame.size.width = 1;
@@ -96,54 +81,48 @@ static BOOL isLion;
     return frame;
 }
 
-- (BOOL)previewView:(id)aView acceptDrop:(id)aObject onPreviewItem:(id)item {
-    return YES;
-}
-
-- (BOOL)previewView:(id)aView writePreviewItem:(id)item toPasteboard:(id)pboard {
-    [pboard declareTypes:@[NSURLPboardType] owner:nil];
-    [item writeToPasteboard:pboard];
-    return YES;
-}
-
-- (void)previewView:(id)aView didShowPreviewItem:(id)item {
-    //[aView setEnableDragNDrop:YES];
+// This delegate method provides a transition image between the table view and the preview panel
+- (id)previewPanel:(QLPreviewPanel *)panel transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(NSRect *)contentRect
+{
+    DownloadItem* downloadItem = (DownloadItem *)item;
+    return downloadItem.iconImage;
 }
 
 + (NSMutableArray *)URLs {
-    return [self sharedInstance]->_URLs;
+    return [self sharedInstance]->_downloads;
 }
 
-+ (id)Panel {
-    return [self sharedInstance]->_panel;
-}
+//+ (QLPreviewPanel *)Panel {
+//    return [self sharedInstance]->_previewPanel;
+//}
 
-+ (void)orderFront {
-    if (isLion) {
-        [[self Panel] makeKeyAndOrderFront:self];
-        return;
-    }
-    // 1 = fade in, 2 = zoom in
-    [[self Panel] makeKeyAndOrderFrontWithEffect:2 canClose:YES];
-}
-
-+ (void)add:(NSURL *)URL {
-    NSMutableArray *URLs = [self URLs];
+- (void)addDownload:(DownloadItem *)item {
     // check if the url is already under preview
-    NSUInteger index = [URLs indexOfObject:URL];
-    if (index == NSNotFound) {
-        index = [URLs count];
-        [URLs addObject:URL];
+    __block NSInteger previewItemIndex = -1;
+    [_downloads enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        DownloadItem *it = obj;
+        if ([it.originalURL isEqual:item.originalURL]) {
+            previewItemIndex = idx;
+            *stop = YES;
+        }
+    }];
+    if (previewItemIndex < 0) {
+        previewItemIndex = _downloads.count;
+        [_downloads addObject:item];
     }
-    // update
-    if (isLeopard)
-        [[self Panel] setURLs:URLs currentIndex:index preservingDisplayState:YES];
-    else {
-        [[self Panel] setCurrentPreviewItemIndex:index];
-        [[self Panel] reloadDataPreservingDisplayState:YES];
+    _currentItemIndex = previewItemIndex;
+    
+    if (_previewPanel) {
+        [self updatePreviewItem];
     }
-    [self orderFront];
 }
+
+- (void)updatePreviewItem {
+    _previewPanel.currentPreviewItemIndex = _currentItemIndex;
+    [_previewPanel reloadData];
+    [_previewPanel makeKeyAndOrderFront:nil];
+}
+
 /*
 + (void)removeAll {
     [[self URLs] removeAllObjects];
@@ -154,12 +133,12 @@ static BOOL isLion;
 #pragma mark -
 #pragma mark QLPreviewPanelDataSource protocol
 
-- (NSInteger)numberOfPreviewItemsInPreviewPanel:(id)panel {
-    return [_URLs count];
+- (NSInteger)numberOfPreviewItemsInPreviewPanel:(QLPreviewPanel *)panel {
+    return _downloads.count;
 }
 
-- (id)previewPanel:(id)panel previewItemAtIndex:(NSInteger)index {
-    return _URLs[index];
+- (id <QLPreviewItem>)previewPanel:(QLPreviewPanel *)panel previewItemAtIndex:(NSInteger)index {
+    return _downloads[index];
 }
 
 @end

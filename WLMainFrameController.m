@@ -302,7 +302,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 }
 
 - (IBAction)toggleMouseAction:(id)sender {
-	if (![_tabView frontMostConnection])
+	if (!_tabView.frontMostConnection)
 		return;
 	
     BOOL state = [sender state];
@@ -332,7 +332,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 }
 
 - (IBAction)setEncoding:(id)sender {
-    if ([_tabView frontMostConnection]) {
+    if (_tabView.frontMostConnection) {
 		WLEncoding encoding = WLGBKEncoding;
 		if ([[sender title] rangeOfString:@"GBK"].location != NSNotFound)
 			encoding = WLGBKEncoding;
@@ -438,7 +438,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 }
 
 - (BOOL)shouldReconnect {
-	if (![[_tabView frontMostConnection] isConnected]) return YES;
+	if (!_tabView.frontMostConnection.isConnected) return YES;
     if (![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) return YES;
     NSBeginAlertSheet(NSLocalizedString(@"Are you sure you want to reconnect?", @"Sheet Title"), 
                       NSLocalizedString(@"Confirm", @"Default Button"), 
@@ -456,13 +456,13 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 			  returnCode:(int)returnCode 
 			 contextInfo:(void *)contextInfo {
     if (returnCode == NSAlertDefaultReturn) {
-		[[_tabView frontMostConnection] reconnect];
+		[_tabView.frontMostConnection reconnect];
     }
 }
 
 - (IBAction)reconnect:(id)sender {
-    if (![[_tabView frontMostConnection] isConnected] || ![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) {
-		[[_tabView frontMostConnection] reconnect];
+    if (!_tabView.frontMostConnection.isConnected || ![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) {
+		[_tabView.frontMostConnection reconnect];
         return;
     }
     NSBeginAlertSheet(NSLocalizedString(@"Are you sure you want to reconnect?", @"Sheet Title"), 
@@ -492,8 +492,8 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 	if (action == @selector(addCurrentSite:) ||
         action == @selector(reconnect:) ||
 		action == @selector(setEncoding:)) {
-		if (![_tabView frontMostConnection] ||
-			[[[_tabView frontMostConnection] site] isDummy])
+		if (!_tabView.frontMostConnection ||
+			_tabView.frontMostConnection.site.isDummy)
 			return NO;
 	} else if (action == @selector(selectNextTab:) ||
 			   action == @selector(selectPrevTab:)) {

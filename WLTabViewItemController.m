@@ -34,6 +34,7 @@
 @end
 
 @implementation WLTabViewItemController
+
 + (WLTabViewItemController *)emptyTabViewItemController {
 	return [[WLTabViewItemController alloc] initWithContent:nil];
 }

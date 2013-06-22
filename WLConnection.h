@@ -18,27 +18,13 @@
 // modified by boost @ 9#
 // inhert from NSObjectController for PSMTabBarControl
 @interface WLConnection : NSObject <WLTabBarCellContentProvider> {
-    NSImage *_icon;
-    BOOL _isProcessing;
-    NSInteger _objectCount;
-
     BOOL _connected;
-
-    NSDate *__weak _lastTouchDate;
     
-    WLTerminal *_terminal;
 	WLTerminalFeeder *_feeder;
-    NSObject <WLProtocol> *_protocol;
-    WLSite *_site;
-	
-	WLMessageDelegate *_messageDelegate;
-	NSInteger _messageCount;
-	
-	id __unsafe_unretained _tabViewItemController;
 }
+
 @property (readwrite, strong) WLSite *site;
 @property (readwrite, strong, setter=setTerminal:, nonatomic) WLTerminal *terminal;
-@property (readwrite, strong) WLTerminalFeeder *terminalFeeder;
 @property (readwrite, strong) NSObject <WLProtocol> *protocol;
 @property (readwrite, assign, setter=setConnected:, nonatomic) BOOL isConnected;
 @property (readonly) NSDate *lastTouchDate;
@@ -48,9 +34,9 @@
 @property (readwrite, strong) NSImage *icon;
 @property (readwrite, assign) BOOL isProcessing;
 @property (readwrite, assign) NSInteger objectCount;
-@property (readwrite, unsafe_unretained) id tabViewItemController;
+@property (readwrite, weak) id tabViewItemController;
 
-- (id)initWithSite:(WLSite *)site;
+- (instancetype)initWithSite:(WLSite *)site;
 
 - (void)close;
 - (void)reconnect;

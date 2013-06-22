@@ -103,7 +103,7 @@
 }
 
 - (WLTerminal *)frontMostTerminal {
-	return [[self frontMostConnection] terminal];
+	return self.frontMostConnection.terminal;
 }
 
 - (BOOL)isFrontMostTabPortal {
@@ -138,17 +138,17 @@
 	
 	// set appropriate label
 	if (theLabel) {
-		[tabViewItem setLabel:theLabel];
+        tabViewItem.label = theLabel;
 	}
 	
 	// set the view
 	[tabViewItem setView:_terminalView];
 	
-	if (![[theConnection site] isDummy]) {
+	if (!theConnection.site.isDummy) {
 		// Create a new terminal for receiving connection's content, and forward to view
 		WLTerminal *terminal = [[WLTerminal alloc] init];
 		[terminal addObserver:_terminalView];
-		[theConnection setTerminal:terminal];
+		theConnection.terminal = terminal;
 	}
 	
 	// select the tab
@@ -170,7 +170,7 @@
 // Show the portal, initiallize it if necessary
 - (void)updatePortal {
 	NSArray *sites = [[NSUserDefaults standardUserDefaults] arrayForKey:@"Sites"];
-	NSMutableArray *portalItems = [NSMutableArray arrayWithCapacity:[sites count]];
+	NSMutableArray *portalItems = [NSMutableArray arrayWithCapacity:sites.count];
 	for (NSDictionary *d in sites) {
 		WLBookmarkPortalItem *item = [[WLBookmarkPortalItem alloc] initWithSite:[WLSite siteWithDictionary:d]];
 		[portalItems addObject:item];
@@ -229,7 +229,7 @@
 }
 
 - (void)selectNextTabViewItem:(NSTabViewItem *)tabViewItem {
-	if([self indexOfTabViewItem:[self selectedTabViewItem]] == [self numberOfTabViewItems] - 1)
+	if ([self indexOfTabViewItem:[self selectedTabViewItem]] == [self numberOfTabViewItems] - 1)
 		[self selectFirstTabViewItem:self];
 	else
 		[super selectNextTabViewItem:self];

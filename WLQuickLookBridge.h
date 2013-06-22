@@ -7,18 +7,22 @@
 //
 
 #import <Cocoa/Cocoa.h>
+// Quartz framework provides the QLPreviewPanel public API
+#import <Quartz/Quartz.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
-@interface WLQuickLookBridge : NSObject <NSComboBoxDataSource> {
-#else
-@interface WLQuickLookBridge : NSObject {
-#endif
-    NSMutableArray *_URLs;
-    id _panel;
+@class DownloadItem;
+@class QLPreviewPanel;
+
+@interface WLQuickLookBridge : NSObject <QLPreviewPanelDataSource, QLPreviewPanelDelegate> {
+    NSMutableArray* _downloads;
+    NSInteger _currentItemIndex;
 }
 
-+ (void)orderFront;
-+ (void)add:(NSURL *)URL;
-//+ (void)removeAll;
++ (WLQuickLookBridge *)sharedInstance;
+- (void)addDownload:(DownloadItem *)item;
+- (void)showPreviewPanel;
+- (void)updatePreviewItem;
+
+@property (weak) QLPreviewPanel *previewPanel;
 
 @end

@@ -11,6 +11,8 @@
 #import "WLGlobalConfig.h"
 #import "WLMouseBehaviorManager.h"
 
+#import <Quartz/Quartz.h>
+
 @implementation WLMouseHotspotHandler
 @synthesize manager = _manager;
 - (id)init {
@@ -35,6 +37,9 @@
 	return [self initWithView:[_manager view]];
 }
 
+- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel {
+    return YES;
+}
 
 - (void)mouseEntered:(NSEvent *)theEvent {
 	// Do nothing, just a virtual function

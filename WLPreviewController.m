@@ -10,8 +10,7 @@
 #import "WLQuickLookBridge.h"
 #import "WLGrowlBridge.h"
 #import "WLGlobalConfig.h"
-
-NSString *const WLGIFToHTMLFormat = @"<html><body bgcolor='Black'><center><img scalefit='1' style='position: absolute; top: 0; right: 0; bottom: 0; left: 0; height:100%%; margin: auto;' src='%@'></img></center></body></html>";
+#import "DownloadItem.h"
 
 @interface WLDownloadDelegate : NSObject <NSWindowDelegate, NSURLDownloadDelegate> {
     // This progress bar is restored by gtCarrera
@@ -59,7 +58,7 @@ static BOOL sHasCacheDir = NO;
 }
 
 - (IBAction)openPreview:(id)sender {
-    [WLQuickLookBridge orderFront];
+    [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront:self];
 }
 
 + (NSURLDownload *)downloadWithURL:(NSURL *)URL {
@@ -227,7 +226,7 @@ static NSString * stringFromFileSize(long long size) {
     // set local path
     NSString *cacheDir = [WLGlobalConfig cacheDirectory];
     _path = [cacheDir stringByAppendingPathComponent:_filename];
-	if(sDownloadedURLInfo[[[[download request] URL] absoluteString]]) { // URL in cache
+	if (sDownloadedURLInfo[download.request.URL.absoluteString]) { // URL in cache
 		// Get local file size
 		NSString * tempPath = [sDownloadedURLInfo valueForKey:[[[download request] URL] absoluteString]];
 		NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:tempPath error:nil];
@@ -285,14 +284,12 @@ static void formatProps(NSMutableString *s, NSArray *fmts, NSArray *vals) {
 
 - (void)downloadDidFinish:(NSURLDownload *)download {
     [sURLs removeObject:[[download request] URL]];
-	[sDownloadedURLInfo setValue:_path forKey:[[[download request] URL] absoluteString]];
-	if ([[_path pathExtension] isEqualToString:@"gif"]) {
-		NSURL *htmlURL = [NSURL fileURLWithPath:[[_path stringByDeletingPathExtension] stringByAppendingPathExtension:@"html"]];
-		[[NSString stringWithFormat:WLGIFToHTMLFormat, [NSURL fileURLWithPath:_path]] writeToURL:htmlURL atomically:NO encoding:NSUTF8StringEncoding error:NULL];
-		[WLQuickLookBridge add:htmlURL];
-	} else {
-		[WLQuickLookBridge add:[NSURL fileURLWithPath:_path]];
-	}
+    NSURL *URL = download.request.URL;
+	[sDownloadedURLInfo setValue:_path forKey:URL.absoluteString];
+    WLQuickLookBridge *quickLook = [WLQuickLookBridge sharedInstance];
+    [quickLook addDownload:[[DownloadItem alloc] initWithPath:_path URL:URL]];
+    [quickLook showPreviewPanel];
+    return;
 //	if (![WLGrowlBridge isMistEnabled])
 //		[WLGrowlBridge notifyWithTitle:_filename
 //						   description:NSLocalizedString(@"Completed", "Download completed; will open previewer")
@@ -343,7 +340,7 @@ static void formatProps(NSMutableString *s, NSArray *fmts, NSArray *vals) {
                     [props appendFormat:NSLocalizedString(@"tiffStringFormat", "\nManufacturer and Model: \n%@ %@"), makeName, modelName];
             }
 
-            if([props length]) 
+            if (props.length)
                 [WLGrowlBridge notifyWithTitle:_filename
                                    description:props
                               notificationName:kGrowlNotificationNameEXIFInformation
@@ -353,9 +350,6 @@ static void formatProps(NSMutableString *s, NSArray *fmts, NSArray *vals) {
         }
         CFRelease(exifSource);
     }
-
-	// Commented out by K.O.ed: Don't release here, release when the delegate dealloc.
-    //[download release];
 }
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error {
