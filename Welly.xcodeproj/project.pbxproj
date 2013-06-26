@@ -106,6 +106,7 @@
 		945C31AE1775ED650032DEE0 /* DownloadItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 945C31AD1775ED650032DEE0 /* DownloadItem.m */; };
 		9473BF7417760F8E00D31AF5 /* WLTerminalView+QuickLook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */; };
 		94A3C9B71773471100B5A498 /* PSMTabBarControl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8540F7240CEB43FF003B17D1 /* PSMTabBarControl.framework */; };
+		94FE02EB177B4DF1004BA304 /* WLPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FE02EA177B4DF1004BA304 /* WLPrefsWindowController.m */; };
 		D64A480B11E90350008ACEBD /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D64A480A11E90350008ACEBD /* Growl.framework */; };
 		D64A480E11E90356008ACEBD /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D64A480A11E90350008ACEBD /* Growl.framework */; };
 /* End PBXBuildFile section */
@@ -307,6 +308,8 @@
 		945C31AD1775ED650032DEE0 /* DownloadItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadItem.m; sourceTree = "<group>"; };
 		9473BF7217760F8E00D31AF5 /* WLTerminalView+QuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WLTerminalView+QuickLook.h"; sourceTree = "<group>"; };
 		9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WLTerminalView+QuickLook.m"; sourceTree = "<group>"; };
+		94FE02E9177B4DF1004BA304 /* WLPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLPrefsWindowController.h; sourceTree = "<group>"; };
+		94FE02EA177B4DF1004BA304 /* WLPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLPrefsWindowController.m; sourceTree = "<group>"; };
 		D64A480A11E90350008ACEBD /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -658,6 +661,8 @@
 				5A56C3810E342CFF00082312 /* WLPostDownloadDelegate.m */,
 				5AEED2FD107205ED00034E2A /* WLSitesPanelController.h */,
 				5AEED2FE107205ED00034E2A /* WLSitesPanelController.m */,
+				94FE02E9177B4DF1004BA304 /* WLPrefsWindowController.h */,
+				94FE02EA177B4DF1004BA304 /* WLPrefsWindowController.m */,
 			);
 			name = "Panel Controllers";
 			sourceTree = "<group>";
@@ -862,6 +867,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9473BF7417760F8E00D31AF5 /* WLTerminalView+QuickLook.m in Sources */,
+				94FE02EB177B4DF1004BA304 /* WLPrefsWindowController.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				945C31AE1775ED650032DEE0 /* DownloadItem.m in Sources */,
 				8570AD5F0A3923A900838442 /* WLTerminalView.m in Sources */,

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4457.6" systemVersion="13A476u" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4457.9" systemVersion="13A497d" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1070" defaultVersion="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4457.6"/>
+        <deployment version="1070" defaultVersion="1090" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4457.9"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -21,6 +21,7 @@
                 <action selector="copy:" destination="157" id="181"/>
                 <action selector="copyImage:" destination="1649" id="1650"/>
                 <action selector="cut:" destination="883" id="884"/>
+                <action selector="openPreferencesWindow:" destination="129" id="oQ5-7W-tRI"/>
                 <action selector="paste:" destination="171" id="176"/>
                 <action selector="performClose:" destination="73" id="193"/>
                 <action selector="performMiniaturize:" destination="23" id="37"/>
@@ -433,14 +434,14 @@ ssh://[id@]your.site.org[:port]</string>
                             </buttonCell>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="23A0A597-93F4-41FE-946C-E22EFACE5154" label="Auto Reply" paletteLabel="Auto Reply" image="355658EB-1408-432B-9116-AF4AC823EB65" id="972">
+                    <toolbarItem implicitItemIdentifier="23A0A597-93F4-41FE-946C-E22EFACE5154" label="Auto Reply" paletteLabel="Auto Reply" image="AB5FEE20-732F-40E9-932B-68B712FA8E12" id="972">
                         <nil key="toolTip"/>
                         <size key="minSize" width="30" height="19"/>
                         <size key="maxSize" width="30" height="19"/>
                         <button key="view" verticalHuggingPriority="750" id="970">
                             <rect key="frame" x="18" y="14" width="30" height="19"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="recessed" title="Re:" bezelStyle="recessed" image="355658EB-1408-432B-9116-AF4AC823EB65" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="971">
+                            <buttonCell key="cell" type="recessed" title="Re:" bezelStyle="recessed" image="AB5FEE20-732F-40E9-932B-68B712FA8E12" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="971">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                 <font key="font" metaFont="systemBold" size="12"/>
                             </buttonCell>
@@ -829,7 +830,6 @@ ssh://[id@]your.site.org[:port]</string>
                 <action selector="openEmoticonsPanel:" destination="836" id="1636"/>
                 <action selector="openEmoticonsPanel:" destination="831" id="1637"/>
                 <action selector="openLocation:" destination="265" id="273"/>
-                <action selector="openPreferencesWindow:" destination="129" id="726"/>
                 <action selector="openRSS:" destination="1288" id="1290"/>
                 <action selector="openSitePanel:" destination="418" id="1631"/>
                 <action selector="openSitePanel:" destination="269" id="1633"/>
@@ -879,7 +879,7 @@ ssh://[id@]your.site.org[:port]</string>
         </customObject>
     </objects>
     <resources>
-        <image name="355658EB-1408-432B-9116-AF4AC823EB65" width="1" height="1">
+        <image name="AB5FEE20-732F-40E9-932B-68B712FA8E12" width="1" height="1">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -910,6 +910,115 @@ Amo
             <relationships>
                 <relationship kind="action" name="copyImage:"/>
             </relationships>
+        </class>
+        <class className="NSTextView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSTextView.h"/>
+            <relationships>
+                <relationship kind="action" name="orderFrontSharingServicePicker:"/>
+                <relationship kind="action" name="toggleQuickLookPreviewPanel:"/>
+            </relationships>
+        </class>
+        <class className="PSMTabBarControl" superclassName="NSControl">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PSMTabBarControl.h"/>
+            <relationships>
+                <relationship kind="outlet" name="delegate"/>
+                <relationship kind="outlet" name="partnerView"/>
+                <relationship kind="outlet" name="tabView" candidateClass="NSTabView"/>
+            </relationships>
+        </class>
+        <class className="SUUpdater" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SUUpdater.h"/>
+            <relationships>
+                <relationship kind="action" name="checkForUpdates:"/>
+                <relationship kind="outlet" name="delegate"/>
+            </relationships>
+        </class>
+        <class className="WLEffectView" superclassName="NSView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLEffectView.h"/>
+            <relationships>
+                <relationship kind="outlet" name="_mainView" candidateClass="WLTerminalView"/>
+            </relationships>
+        </class>
+        <class className="WLGlobalConfig" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLGlobalConfig.h"/>
+        </class>
+        <class className="WLMainFrameController" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLMainFrameController.h"/>
+            <relationships>
+                <relationship kind="action" name="addCurrentSite:"/>
+                <relationship kind="action" name="closeMessageWindow:"/>
+                <relationship kind="action" name="closeTab:"/>
+                <relationship kind="action" name="connectLocation:"/>
+                <relationship kind="action" name="decreaseFontSize:"/>
+                <relationship kind="action" name="downloadPost:"/>
+                <relationship kind="action" name="increaseFontSize:"/>
+                <relationship kind="action" name="newTab:"/>
+                <relationship kind="action" name="openComposePanel:"/>
+                <relationship kind="action" name="openEmoticonsPanel:"/>
+                <relationship kind="action" name="openLocation:"/>
+                <relationship kind="action" name="openPreferencesWindow:"/>
+                <relationship kind="action" name="openRSS:"/>
+                <relationship kind="action" name="openSiteMenu:"/>
+                <relationship kind="action" name="openSitePanel:"/>
+                <relationship kind="action" name="reconnect:"/>
+                <relationship kind="action" name="restoreSettings:"/>
+                <relationship kind="action" name="selectNextTab:"/>
+                <relationship kind="action" name="selectPrevTab:"/>
+                <relationship kind="action" name="setEncoding:"/>
+                <relationship kind="action" name="toggleAutoReply:"/>
+                <relationship kind="action" name="toggleDetectDoubleByte:"/>
+                <relationship kind="action" name="toggleMouseAction:"/>
+                <relationship kind="action" name="togglePresentationMode:"/>
+                <relationship kind="action" name="toggleShowsHiddenText:"/>
+                <relationship kind="outlet" name="_addressBar"/>
+                <relationship kind="outlet" name="_autoReplyButton"/>
+                <relationship kind="outlet" name="_autoReplyMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_closeTabMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_closeWindowMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_composeText" candidateClass="NSTextView"/>
+                <relationship kind="outlet" name="_composeWindow" candidateClass="NSPanel"/>
+                <relationship kind="outlet" name="_detectDoubleByteButton"/>
+                <relationship kind="outlet" name="_detectDoubleByteMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_encodingMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_mainWindow" candidateClass="NSWindow"/>
+                <relationship kind="outlet" name="_messageWindow" candidateClass="NSPanel"/>
+                <relationship kind="outlet" name="_mouseButton"/>
+                <relationship kind="outlet" name="_presentationModeMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_showHiddenTextMenuItem" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_sitesMenu" candidateClass="NSMenuItem"/>
+                <relationship kind="outlet" name="_tabBarControl" candidateClass="WLTabBarControl"/>
+                <relationship kind="outlet" name="_unreadMessageTextView" candidateClass="NSTextView"/>
+            </relationships>
+        </class>
+        <class className="WLPreviewController" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLPreviewController.h"/>
+            <relationships>
+                <relationship kind="action" name="openPreview:"/>
+            </relationships>
+        </class>
+        <class className="WLTabBarControl" superclassName="PSMTabBarControl">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLTabBarControl.h"/>
+        </class>
+        <class className="WLTabView" superclassName="NSTabView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLTabView.h"/>
+            <relationships>
+                <relationship kind="action" name="decreaseFontSize:"/>
+                <relationship kind="action" name="increaseFontSize:"/>
+                <relationship kind="outlet" name="_tabBarControl" candidateClass="WLTabBarControl"/>
+                <relationship kind="outlet" name="_terminalView" candidateClass="WLTerminalView"/>
+            </relationships>
+        </class>
+        <class className="WLTermView" superclassName="NSView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLTermView.h"/>
+        </class>
+        <class className="WLTerminalView" superclassName="WLTermView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/WLTerminalView.h"/>
+            <relationships>
+                <relationship kind="outlet" name="_textField" candidateClass="YLMarkedTextView"/>
+            </relationships>
+        </class>
+        <class className="YLMarkedTextView" superclassName="NSView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/YLMarkedTextView.h"/>
         </class>
     </classes>
 </document>

@@ -22,7 +22,7 @@
 #import "WLEmoticonsPanelController.h"
 #import "WLComposePanelController.h"
 #import "WLPostDownloadDelegate.h"
-#import "DBPrefsWindowController.h"
+#import "WLPrefsWindowController.h"
 
 // Full Screen
 #import "WLPresentationController.h"
@@ -483,7 +483,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 }
 
 - (IBAction)openPreferencesWindow:(id)sender {
-    [[DBPrefsWindowController sharedPrefsWindowController] showWindow:nil];
+    [[WLPrefsWindowController sharedPrefsWindowController] showWindow:nil];
 }
 
 #pragma mark -
