@@ -18,26 +18,7 @@ static WLGlobalConfig *gConfig;
 
 static NSImage *gLeftImage;
 
-@interface WLTermView ()
-- (void)drawSpecialSymbol:(unichar)ch 
-				   forRow:(int)r 
-				   column:(int)c 
-			leftAttribute:(attribute)attr1 
-		   rightAttribute:(attribute)attr2;
-- (void)updateBackgroundForRow:(int)r 
-						  from:(int)start 
-							to:(int)end;
-- (void)drawBlink;
-- (void)drawStringForRow:(int)r
-				 context:(CGContextRef)myCGContext;
-- (void)tick;
-@end
-
-
 @implementation WLTermView
-
-@synthesize fontWidth = _fontWidth;
-@synthesize fontHeight = _fontHeight;
 
 #pragma mark -
 #pragma mark Initialization & Destruction
@@ -72,7 +53,7 @@ static NSImage *gLeftImage;
 	[_asciiArtRender configure];
 }
 
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
     if ((self = [super initWithFrame:frame])) {
 		_asciiArtRender = [WLAsciiArtRender new];
 		
@@ -266,15 +247,14 @@ static NSImage *gLeftImage;
     if (![gConfig blinkTicker])
 		return;
 	
-    int c, r;
     id ds = [self frontMostTerminal];
     if (!ds) 
 		return;
 	
     @autoreleasepool {
-        for (r = 0; r < _maxRow; r++) {
+        for (int r = 0; r < _maxRow; r++) {
             cell *currRow = [ds cellsOfRow: r];
-            for (c = 0; c < _maxColumn; c++) {
+            for (int c = 0; c < _maxColumn; c++) {
                 if (isBlinkCell(currRow[c])) {
                     int bgColorIndex = currRow[c].attr.f.reverse ? currRow[c].attr.f.fgColor : currRow[c].attr.f.bgColor;
                     BOOL bold = currRow[c].attr.f.reverse ? currRow[c].attr.f.bold : NO;
@@ -304,17 +284,16 @@ static NSImage *gLeftImage;
 - (void)extendBottomFrom:(int)start
 					  to:(int)end {
     @autoreleasepool {
-	[_backedImage lockFocus];
+        [_backedImage lockFocus];
+        [_backedImage drawAtPoint:NSMakePoint(0, (_maxRow - end) * _fontHeight)
+                         fromRect:NSMakeRect(0, (_maxRow - end - 1) * _fontHeight,
+                                             _maxColumn * _fontWidth, (end - start) * _fontHeight)
+                        operation:NSCompositeCopy
+                         fraction:1.0];
         
-    [_backedImage drawAtPoint:NSMakePoint(0, (_maxRow - end) * _fontHeight)
-                     fromRect:NSMakeRect(0, (_maxRow - end - 1) * _fontHeight,
-                                         _maxColumn * _fontWidth, (end - start) * _fontHeight)
-                    operation:NSCompositeCopy
-                     fraction:1.0];
-	
-	[gConfig->_colorTable[0][gConfig->_bgColorIndex] set];
-	NSRectFill(NSMakeRect(0, (_maxRow - end - 1) * _fontHeight, _maxColumn * _fontWidth, _fontHeight));
-	[_backedImage unlockFocus];
+        [gConfig->_colorTable[0][gConfig->_bgColorIndex] set];
+        NSRectFill(NSMakeRect(0, (_maxRow - end - 1) * _fontHeight, _maxColumn * _fontWidth, _fontHeight));
+        [_backedImage unlockFocus];
     }
 }
 
@@ -329,96 +308,95 @@ static NSImage *gLeftImage;
 - (void)extendTopFrom:(int)start 
 				   to:(int)end {
     @autoreleasepool {
-    [_backedImage lockFocus];
-        
-    [_backedImage drawAtPoint:NSMakePoint(0, (_maxRow - end - 1) * _fontHeight)
-                     fromRect:NSMakeRect(0, (_maxRow - end) * _fontHeight,
-                                         _maxColumn * _fontWidth, (end - start) * _fontHeight)
-                    operation:NSCompositeCopy
-                     fraction:1.0];
-	
-	[gConfig->_colorTable[0][gConfig->_bgColorIndex] set];
-	NSRectFill(NSMakeRect(0, (_maxRow - start - 1) * _fontHeight, _maxColumn * _fontWidth, _fontHeight));
-	[_backedImage unlockFocus];
+        [_backedImage lockFocus];
+        [_backedImage drawAtPoint:NSMakePoint(0, (_maxRow - end - 1) * _fontHeight)
+                         fromRect:NSMakeRect(0, (_maxRow - end) * _fontHeight,
+                                             _maxColumn * _fontWidth, (end - start) * _fontHeight)
+                        operation:NSCompositeCopy
+                         fraction:1.0];
+        [gConfig->_colorTable[0][gConfig->_bgColorIndex] set];
+        NSRectFill(NSMakeRect(0, (_maxRow - start - 1) * _fontHeight, _maxColumn * _fontWidth, _fontHeight));
+        [_backedImage unlockFocus];
     }
 }
 
 - (void)updateBackedImage {
     @autoreleasepool {
-		int x, y;
-    WLTerminal *ds = [self frontMostTerminal];
-		[_backedImage lockFocus];
-		CGContextRef myCGContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-		if (ds) {
-        /* Draw Background */
-        for (y = 0; y < _maxRow; y++) {
-            for (x = 0; x < _maxColumn; x++) {
-                if ([ds isDirtyAtRow:y column:x]) {
-                    int startx = x;
-                    for (; x < _maxColumn && [ds isDirtyAtRow:y column:x]; x++) ;
-                    [self updateBackgroundForRow:y from:startx to:x];
+        WLTerminal *ds = [self frontMostTerminal];
+        [_backedImage lockFocus];
+        CGContextRef myCGContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        if (ds) {
+            /* Draw Background */
+            for (int y = 0; y < _maxRow; y++) {
+                for (int x = 0; x < _maxColumn; x++) {
+                    if ([ds isDirtyAtRow:y column:x]) {
+                        int startx = x;
+                        for (; x < _maxColumn && [ds isDirtyAtRow:y column:x]; x++) ;
+                        [self updateBackgroundForRow:y from:startx to:x];
+                    }
                 }
             }
-        }
-        CGContextSaveGState(myCGContext);
-        CGContextSetShouldSmoothFonts(myCGContext, 
-                                      [gConfig shouldSmoothFonts] ? true : false);
-        
-        /* Draw String row by row */
-        for (y = 0; y < _maxRow; y++) {
-            [self drawStringForRow:y context:myCGContext];
-        }
-        CGContextRestoreGState(myCGContext);
-        /*
-        for (y = 0; y < _maxRow; y++) {
-            for (x = 0; x < _maxColumn; x++) {
-                [ds setDirty:NO atRow:y column:x];
+            CGContextSaveGState(myCGContext);
+            CGContextSetShouldSmoothFonts(myCGContext,
+                                          [gConfig shouldSmoothFonts] ? true : false);
+            /* Draw String row by row */
+            for (int y = 0; y < _maxRow; y++) {
+                [self drawStringForRow:y context:myCGContext];
             }
-        }*/
-			[ds removeAllDirtyMarks];
-    } else {
-        [[NSColor clearColor] set];
-        CGContextFillRect(myCGContext, CGRectMake(0, 0, _maxColumn * _fontWidth, _maxRow * _fontHeight));
+            CGContextRestoreGState(myCGContext);
+            /*
+            for (y = 0; y < _maxRow; y++) {
+                for (x = 0; x < _maxColumn; x++) {
+                    [ds setDirty:NO atRow:y column:x];
+                }
+            }*/
+            [ds removeAllDirtyMarks];
+        } else {
+            [[NSColor clearColor] set];
+            CGContextFillRect(myCGContext, CGRectMake(0, 0, _maxColumn * _fontWidth, _maxRow * _fontHeight));
+        }
+        [_backedImage unlockFocus];
+        return;
     }
-		
-		[_backedImage unlockFocus];
-		return;
-	}
 }
 
 - (void)drawStringForRow:(int)r
 				 context:(CGContextRef)myCGContext {
-	int i, c, x;
-	int start, end;
 	unichar textBuf[_maxColumn];
 	BOOL isDoubleByte[_maxColumn];
+    // the colors of first half the double-byte char and the second half char
+    // are different.
 	BOOL isDoubleColor[_maxColumn];
 	int bufIndex[_maxColumn];
 	int runLength[_maxColumn];
 	CGPoint position[_maxColumn];
-	int bufLength = 0;
     
     CGFloat ePaddingLeft = [gConfig englishFontPaddingLeft], ePaddingBottom = [gConfig englishFontPaddingBottom];
     CGFloat cPaddingLeft = [gConfig chineseFontPaddingLeft], cPaddingBottom = [gConfig chineseFontPaddingBottom];
     
-    WLTerminal *ds = [self frontMostTerminal];
+    WLTerminal *ds = self.frontMostTerminal;
     [ds updateDoubleByteStateForRow:r];
 	
     cell *currRow = [ds cellsOfRow:r];
 	
-	for (i = 0; i < _maxColumn; i++) 
+	for (int i = 0; i < _maxColumn; i++)
 		isDoubleColor[i] = isDoubleByte[i] = textBuf[i] = runLength[i] = 0;
 	
+    int x;
     // find the first dirty position in this row
-	for (x = 0; x < _maxColumn && ![ds isDirtyAtRow:r column:x]; x++) ;
+	for (x = 0; x < _maxColumn; x++) {
+        if ([ds isDirtyAtRow:r column:x]) {
+            break;
+        }
+    }
 	// all clean? great!
     if (x == _maxColumn) 
 		return; 
     
-	start = x;
-	end = x;
-	
-    // update the information array
+    int start, end;
+    start = end = x;
+    int bufLength = 0;
+    // update the textBuf and other property arrays
 	for (x = start; x < _maxColumn; x++) {
 		if (![ds isDirtyAtRow:r column:x]) 
 			continue;
@@ -433,24 +411,27 @@ static NSImage *gLeftImage;
             isDoubleColor[bufLength] = NO;
             bufLength++;
 		} else if (db == 1) {
+            // db == 2 will be taking care of the whole double-byte char
 			continue;
 		} else if (db == 2) {
-			unsigned short code = (((currRow + x - 1)->byte) << 8) + ((currRow + x)->byte) - 0x8000;
+            cell *hi = currRow + x - 1;
+            cell *lo = currRow + x;
+			unsigned short code = ((hi->byte) << 8) + (lo->byte) - 0x8000;
 			unichar ch = [WLEncoder toUnicode:code 
-									 encoding:[[[self frontMostConnection] site] encoding]];
+									 encoding:self.frontMostConnection.site.encoding];
 			
-			if ([WLAsciiArtRender isAsciiArtSymbol:ch] 
-				&& !([gConfig showsHiddenText]					// If the user desires anti-hidden
-					 && (isHiddenAttribute((currRow + x)->attr) // And this is a hidden special symbol
-						 || isHiddenAttribute((currRow + x - 1)->attr)))) {	// We shall leave it for later part to deal with
+			if ([WLAsciiArtRender isAsciiArtSymbol:ch] &&
+				!([gConfig showsHiddenText]	&&	  // If the user desires anti-hidden
+                  (isHiddenAttribute(lo->attr) || // And this is a hidden special symbol
+                   isHiddenAttribute(hi->attr)))) {	// We shall leave it for later part to deal with
 				[self drawSpecialSymbol:ch 
 								 forRow:r 
 								 column:(x - 1) 
-						  leftAttribute:(currRow + x - 1)->attr 
-						 rightAttribute:(currRow + x)->attr];
+						  leftAttribute:hi->attr
+						 rightAttribute:lo->attr];
 			} else {
-                isDoubleColor[bufLength] = (fgColorIndexOfAttribute(currRow[x - 1].attr) != fgColorIndexOfAttribute(currRow[x].attr) || 
-                                            fgBoldOfAttribute(currRow[x - 1].attr) != fgBoldOfAttribute(currRow[x].attr));
+                isDoubleColor[bufLength] = (fgColorIndexOfAttribute(hi->attr) != fgColorIndexOfAttribute(lo->attr) ||
+                                            fgBoldOfAttribute(hi->attr) != fgBoldOfAttribute(lo->attr));
 				isDoubleByte[bufLength] = YES;
 				textBuf[bufLength] = ch;
 				bufIndex[bufLength] = x;
@@ -469,14 +450,15 @@ static NSImage *gLeftImage;
 	CFRelease(str);
 	CFRelease(attributedString);
     
-	/* Run-length of the style */
-	c = 0;
-	while (c < bufLength) {
+	// Run-length of the style
+    // build up the attributed string
+	for (int c = 0; c < bufLength;) {
 		int location = c;
 		int length = 0;
 		BOOL db = isDoubleByte[c];
 		
 		attribute currAttr, lastAttr = (currRow + bufIndex[c])->attr;
+        // advance current index to find the bindary
 		for (; c < bufLength; c++) {
 			currAttr = (currRow + bufIndex[c])->attr;
 			if (currAttr.v != lastAttr.v || isDoubleByte[c] != db) break;
@@ -494,22 +476,19 @@ static NSImage *gLeftImage;
 	CTLineRef line = CTLineCreateWithAttributedString(mutableAttributedString);
 	CFRelease(mutableAttributedString);
 	
-	CFIndex glyphCount = CTLineGetGlyphCount(line);
-	if (glyphCount == 0) {
+	if (CTLineGetGlyphCount(line) == 0) {
 		CFRelease(line);
 		return;
 	}
-	
+
+    // walk thru each run, examine each character in each of them
 	CFArrayRef runArray = CTLineGetGlyphRuns(line);
 	CFIndex runCount = CFArrayGetCount(runArray);
 	CFIndex glyphOffset = 0;
 	
-	CFIndex runIndex = 0;
-	
-	for (; runIndex < runCount; runIndex++) {
+	for (CFIndex runIndex = 0; runIndex < runCount; runIndex++) {
 		CTRunRef run = (CTRunRef) CFArrayGetValueAtIndex(runArray,  runIndex);
 		CFIndex runGlyphCount = CTRunGetGlyphCount(run);
-		CFIndex runGlyphIndex = 0;
 		
 		CFDictionaryRef attrDict = CTRunGetAttributes(run);
 		CTFontRef runFont = (CTFontRef)CFDictionaryGetValue(attrDict,  kCTFontAttributeName);
@@ -531,7 +510,7 @@ static NSImage *gLeftImage;
         BOOL hidden = isHiddenAttribute(currRow[lastIndex].attr);
         BOOL lastDoubleByte = isDoubleByte[glyphOffset];
         
-        for (runGlyphIndex = 0; runGlyphIndex <= runGlyphCount; runGlyphIndex++) {
+        for (CFIndex runGlyphIndex = 0; runGlyphIndex <= runGlyphCount; runGlyphIndex++) {
             int index = bufIndex[glyphOffset + runGlyphIndex];
             if (runGlyphIndex == runGlyphCount || 
                 ([gConfig showsHiddenText] && isHiddenAttribute(currRow[index].attr) != hidden) ||
@@ -562,7 +541,7 @@ static NSImage *gLeftImage;
         
         
 		/* Double Color */
-		for (runGlyphIndex = 0; runGlyphIndex < runGlyphCount; runGlyphIndex++) {
+		for (CFIndex runGlyphIndex = 0; runGlyphIndex < runGlyphCount; runGlyphIndex++) {
             if (isDoubleColor[glyphOffset + runGlyphIndex]) {
                 CFRange glyphRange = CFRangeMake(runGlyphIndex, 1);
                 CGGlyph glyph;
