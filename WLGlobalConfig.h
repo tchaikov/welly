@@ -64,9 +64,10 @@ NSString *const WLEnglishFontSizeKeyName;
 
 	NSColor *_colorTable[2][NUM_COLOR];
 
-	CFDictionaryRef _cCTAttribute[2][NUM_COLOR];
-	CFDictionaryRef _eCTAttribute[2][NUM_COLOR];
+	NSDictionary *_cCTAttribute[2][NUM_COLOR];
+	NSDictionary *_eCTAttribute[2][NUM_COLOR];
 }
+
 @property (readwrite, assign) int messageCount;
 @property (readwrite, assign) int row;
 @property (readwrite, assign) int column;
@@ -162,4 +163,8 @@ NSString *const WLEnglishFontSizeKeyName;
 - (void)restoreSettings;
 - (NSDictionary *)sizeParameters;
 - (void)setSizeParameters:(NSDictionary *)sizeParameters;
+
+- (NSDictionary *)attributesForDoubleByte:(BOOL)doubleByte
+                                     bold:(BOOL)bold
+                                    color:(int)color;
 @end

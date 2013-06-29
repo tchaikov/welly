@@ -199,7 +199,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
     
     if (_cCTFont) 
 		CFRelease(_cCTFont);
-    _cCTFont = CTFontCreateWithName((CFStringRef)_chineseFontName, _chineseFontSize, NULL);
+    _cCTFont = CTFontCreateWithName((CFStringRef)_chineseFontName,
+                                    _chineseFontSize,
+                                    NULL);
     if (_eCTFont)
 		CFRelease(_eCTFont);
     _eCTFont = CTFontCreateWithName((CFStringRef)_englishFontName, _englishFontSize, NULL);
@@ -210,35 +212,35 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 		CFRelease(_eCGFont);
     _eCGFont = CTFontCopyGraphicsFont(_eCTFont, NULL);
     
-    for (int i = 0; i < NUM_COLOR; i++)
+    for (int i = 0; i < NUM_COLOR; i++) {
         for (int j = 0; j < 2; j++) {
-            int zero = 0;
-            CFNumberRef number = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &zero);
-            CFStringRef cfKeys[] = {kCTFontAttributeName, kCTForegroundColorAttributeName, kCTLigatureAttributeName};
-            
-            CFTypeRef cfValues[] = {_cCTFont, (__bridge CFTypeRef)(_colorTable[j][i]), number};
-            if (_cCTAttribute[j][i])CFRelease(_cCTAttribute[j][i]);
-            _cCTAttribute[j][i] = CFDictionaryCreate(kCFAllocatorDefault, 
-                                                     (const void **)cfKeys, 
-                                                     (const void **)cfValues, 
-                                                     3, 
-                                                     &kCFTypeDictionaryKeyCallBacks, 
-                                                     &kCFTypeDictionaryValueCallBacks);
+            CGColorRef color = [_colorTable[j][i] CGColor];
+            _cCTAttribute[j][i] = @{(NSString *)kCTFontAttributeName: (__bridge id)_cCTFont,
+                                    (NSString *)kCTForegroundColorAttributeName: (__bridge id)color,
+                                    (NSString *)kCTLigatureAttributeName: @(0),
+                                    (NSString *)kCTKernAttributeName: @(_chineseFontPaddingLeft)};
 
-            cfValues[0] = _eCTFont;
-            if (_eCTAttribute[j][i])CFRelease(_eCTAttribute[j][i]);
-            _eCTAttribute[j][i] = CFDictionaryCreate(kCFAllocatorDefault, 
-                                                     (const void **)cfKeys, 
-                                                     (const void **)cfValues, 
-                                                     3, 
-                                                     &kCFTypeDictionaryKeyCallBacks, 
-                                                     &kCFTypeDictionaryValueCallBacks);
-            CFRelease(number);
+            _eCTAttribute[j][i] = @{(NSString *)kCTFontAttributeName: (__bridge id)_eCTFont,
+                                    (NSString *)kCTForegroundColorAttributeName: (__bridge id)color,
+                                    (NSString *)kCTLigatureAttributeName: @(0),
+                                    (NSString *)kCTKernAttributeName: @(_englishFontPaddingLeft)};
         }
+    }
 }
 
 #pragma mark -
 #pragma mark Accessor
+
+- (NSDictionary *)attributesForDoubleByte:(BOOL)doubleByte
+                                     bold:(BOOL)bold
+                                    color:(int)color {
+    if (doubleByte) {
+        return _cCTAttribute[bold][color];
+    } else {
+        return _eCTAttribute[bold][color];
+    }
+}
+
 - (CGFloat)cellWidth {
 	return (CGFloat)((int)(_cellWidth + 0.5));
 }
