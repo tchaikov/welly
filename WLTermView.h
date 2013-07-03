@@ -15,9 +15,6 @@
 	CGFloat _fontWidth;
 	CGFloat _fontHeight;
     
-    CGSize *_singleAdvance;
-    CGSize *_doubleAdvance;
-	
 	NSImage *_backedImage;
 	
 	int _x;

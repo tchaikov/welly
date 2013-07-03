@@ -622,17 +622,15 @@ static NSBezierPath *gSymbolLowerLinePath;
 	}
 }
 
-- (void)drawSpecialSymbol:(unichar)ch 
-				   forRow:(int)r 
-				   column:(int)c 
-			leftAttribute:(attribute)attrL 
-		   rightAttribute:(attribute)attrR {
+- (void)drawSpecialSymbol:(unichar)ch
+                       at:(CGFloat)x
+            leftAttribute:(attribute)attrL
+           rightAttribute:(attribute)attrR {
 	int colorIndexL = fgColorIndexOfAttribute(attrL);
 	int colorIndexR = fgColorIndexOfAttribute(attrR);
-	NSPoint origin = NSMakePoint(c * _fontWidth, (_maxRow - 1 - r) * _fontHeight);
 	
 	NSAffineTransform *xform = [NSAffineTransform transform]; 
-	[xform translateXBy:origin.x yBy:origin.y];
+	[xform translateXBy:x yBy:0];
 	[xform concat];
 	
 	NSColor *colorL = [gConfig colorAtIndex:colorIndexL hilite:fgBoldOfAttribute(attrL)];

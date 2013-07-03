@@ -18,11 +18,10 @@
 }
 
 + (BOOL)isAsciiArtSymbol:(unichar)ch;
-- (void)drawSpecialSymbol:(unichar)ch 
-				   forRow:(int)r 
-				   column:(int)c 
-			leftAttribute:(attribute)attr1 
-		   rightAttribute:(attribute)attr2;
+- (void)drawSpecialSymbol:(unichar)ch
+                       at:(CGFloat)x
+            leftAttribute:(attribute)attrL
+           rightAttribute:(attribute)attrR;
 - (void)configure;
 
 @end

@@ -32,6 +32,9 @@ NSString *const WLCellHeightKeyName = @"CellHeight";
 NSString *const WLChineseFontSizeKeyName = @"ChineseFontSize";
 NSString *const WLEnglishFontSizeKeyName = @"EnglishFontSize";
 
+NSString *const kWLLeftCellTraitsAttributeName = @"LeftCellTraits";
+NSString *const kWLRightCellTraitsAttributeName = @"RightCellTraits";
+
 #pragma mark -
 #pragma mark Class Define
 
@@ -59,27 +62,6 @@ NSString *const WLEnglishFontSizeKeyName = @"EnglishFontSize";
 @end
 
 @implementation WLGlobalConfig
-@synthesize messageCount = _messageCount;
-@synthesize row = _row;
-@synthesize column = _column;
-@synthesize cellWidth = _cellWidth;
-@synthesize cellHeight = _cellHeight;
-@synthesize showsHiddenText = _showsHiddenText;
-@synthesize shouldSmoothFonts = _shouldSmoothFonts;
-@synthesize shouldDetectDoubleByte = _shouldDetectDoubleByte;
-@synthesize shouldEnableMouse = _shouldEnableMouse;
-@synthesize shouldRepeatBounce = _shouldRepeatBounce;
-@synthesize defaultEncoding = _defaultEncoding;
-@synthesize defaultANSIColorKey = _defaultANSIColorKey;
-@synthesize blinkTicker = _blinkTicker;
-@synthesize chineseFontSize = _chineseFontSize;
-@synthesize englishFontSize = _englishFontSize;
-@synthesize chineseFontPaddingLeft = _chineseFontPaddingLeft;
-@synthesize englishFontPaddingLeft = _englishFontPaddingLeft;
-@synthesize chineseFontPaddingBottom = _chineseFontPaddingBottom;
-@synthesize englishFontPaddingBottom = _englishFontPaddingBottom;
-@synthesize chineseFontName = _chineseFontName;
-@synthesize englishFontName = _englishFontName;
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 
@@ -196,34 +178,47 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 }
 
 - (void)refreshFont {
-    
+    NSDictionary *fontAttrs;
+    CTFontDescriptorRef fontDesc;
+    CGAffineTransform fontMat = CGAffineTransformIdentity;
+
     if (_cCTFont) 
 		CFRelease(_cCTFont);
-    _cCTFont = CTFontCreateWithName((CFStringRef)_chineseFontName,
-                                    _chineseFontSize,
-                                    NULL);
+
+    fontAttrs = @{(NSString *)kCTFontFamilyNameAttribute: _chineseFontName,
+                  (NSString *)kCTFontFixedAdvanceAttribute: @(2*_cellWidth)};
+    fontDesc = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)fontAttrs);
+//    fontMat = CGAffineTransformMakeTranslation(0,_chineseFontPaddingBottom);
+    _cCTFont = CTFontCreateWithFontDescriptor(fontDesc, _chineseFontSize, &fontMat);
+    CFRelease(fontDesc);
+    
     if (_eCTFont)
 		CFRelease(_eCTFont);
-    _eCTFont = CTFontCreateWithName((CFStringRef)_englishFontName, _englishFontSize, NULL);
+    fontAttrs = @{(NSString *)kCTFontFamilyNameAttribute: _englishFontName,
+                  (NSString *)kCTFontFixedAdvanceAttribute: @(_cellWidth)};
+    fontDesc = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)fontAttrs);
+//    fontMat = CGAffineTransformMakeTranslation(0,_englishFontPaddingBottom);
+    _eCTFont = CTFontCreateWithFontDescriptor(fontDesc, _englishFontSize, &fontMat);
+    CFRelease(fontDesc);
+
     if (_cCGFont)
 		CFRelease(_cCGFont);
     _cCGFont = CTFontCopyGraphicsFont(_cCTFont, NULL);
+
     if (_eCGFont)
 		CFRelease(_eCGFont);
     _eCGFont = CTFontCopyGraphicsFont(_eCTFont, NULL);
-    
+
     for (int i = 0; i < NUM_COLOR; i++) {
         for (int j = 0; j < 2; j++) {
             CGColorRef color = [_colorTable[j][i] CGColor];
             _cCTAttribute[j][i] = @{(NSString *)kCTFontAttributeName: (__bridge id)_cCTFont,
                                     (NSString *)kCTForegroundColorAttributeName: (__bridge id)color,
-                                    (NSString *)kCTLigatureAttributeName: @(0),
-                                    (NSString *)kCTKernAttributeName: @(_chineseFontPaddingLeft)};
+                                    (NSString *)kCTLigatureAttributeName: @(0)};
 
             _eCTAttribute[j][i] = @{(NSString *)kCTFontAttributeName: (__bridge id)_eCTFont,
                                     (NSString *)kCTForegroundColorAttributeName: (__bridge id)color,
-                                    (NSString *)kCTLigatureAttributeName: @(0),
-                                    (NSString *)kCTKernAttributeName: @(_englishFontPaddingLeft)};
+                                    (NSString *)kCTLigatureAttributeName: @(0)};
         }
     }
 }
@@ -233,12 +228,82 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLGlobalConfig);
 
 - (NSDictionary *)attributesForDoubleByte:(BOOL)doubleByte
                                      bold:(BOOL)bold
-                                    color:(int)color {
+                                    color:(int)color
+                                underline:(BOOL)underline {
+    NSDictionary *dict;
     if (doubleByte) {
-        return _cCTAttribute[bold][color];
+        dict = _cCTAttribute[bold][color];
     } else {
-        return _eCTAttribute[bold][color];
+        dict = _eCTAttribute[bold][color];
     }
+#ifndef USE_CT_UNDERLINE
+    return dict;
+#else
+    if (!underline) {
+        return dict;
+    }
+
+    NSMutableDictionary * attrs = [NSMutableDictionary dictionaryWithDictionary:dict];
+    attrs[(NSString *)kCTUnderlineColorAttributeName] = (__bridge id)[[NSColor orangeColor] CGColor];
+    attrs[(NSString *)kCTUnderlineStyleAttributeName] = @(kCTUnderlineStyleThick | kCTUnderlinePatternSolid);
+    return attrs;
+#endif
+}
+
+- (NSDictionary *)attributesForDoubleByte:(BOOL)doubleByte
+                                 leftBold:(BOOL)leftBold
+                                leftColor:(int)leftColor
+                                rightBold:(BOOL)rightBold
+                               rightColor:(int)rightColor
+{
+    NSDictionary *rightAttrs = [self attributesForDoubleByte:doubleByte
+                                                        bold:rightBold
+                                                       color:rightColor
+                                                   underline:NO];
+    NSDictionary *leftAttrs = [self attributesForDoubleByte:doubleByte
+                                                        bold:leftBold
+                                                      color:leftColor
+                                                  underline:NO];
+    NSMutableDictionary * attrs = [NSMutableDictionary dictionaryWithDictionary:rightAttrs];
+    attrs[kWLLeftCellTraitsAttributeName] = leftAttrs;
+    return attrs;
+}
+
+static void deallocCallback( void* ref ){
+}
+
+static CGFloat ascentCallback( void *ref ){
+    return [[WLGlobalConfig sharedInstance] cellHeight];
+}
+static CGFloat descentCallback( void *ref ){
+    return 0.0F;
+}
+static CGFloat widthCallback( void* ref ){
+    return (NSUInteger)(ref) * [[WLGlobalConfig sharedInstance] cellWidth];
+}
+
+- (NSDictionary *)attributesForFixedWidth:(NSUInteger)width
+                                 withName:(NSString *)name {
+    CTRunDelegateCallbacks callbacks = {
+        .version = kCTRunDelegateCurrentVersion,
+        .dealloc = deallocCallback,
+        .getAscent = ascentCallback,
+        .getDescent = descentCallback,
+        .getWidth = widthCallback,
+    };
+    CTRunDelegateRef delegate = CTRunDelegateCreate(&callbacks, (void *)width);
+    return @{(NSString *)kCTRunDelegateAttributeName: (__bridge id)delegate,
+             name: @(TRUE)};
+}
+
+- (NSDictionary *)attributesForFixedCellWithName:(NSString *)name
+                                   leftAttribute:(unsigned short)left
+                                  rightAttribute:(unsigned short)right {
+    NSDictionary *fixed = [self attributesForFixedWidth:2 withName:name];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:fixed];
+    dict[kWLLeftCellTraitsAttributeName] = @(left);
+    dict[kWLRightCellTraitsAttributeName] = @(right);
+    return dict;
 }
 
 - (CGFloat)cellWidth {

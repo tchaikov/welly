@@ -26,6 +26,9 @@ NSString *const WLCellWidthKeyName;
 NSString *const WLCellHeightKeyName;
 NSString *const WLChineseFontSizeKeyName;
 NSString *const WLEnglishFontSizeKeyName;
+NSString *const kWLLeftCellTraitsAttributeName;
+NSString *const kWLRightCellTraitsAttributeName;
+
 
 @interface WLGlobalConfig : NSObject {
     int _messageCount;
@@ -62,6 +65,9 @@ NSString *const WLEnglishFontSizeKeyName;
 	CGFontRef _cCGFont;
 	CGFontRef _eCGFont;
 
+    // _colorTable[1][..] is the highlight colors which are used when the
+    // characters is bold.
+    // _colorTable[0][..] is the normal ones
 	NSColor *_colorTable[2][NUM_COLOR];
 
 	NSDictionary *_cCTAttribute[2][NUM_COLOR];
@@ -164,7 +170,19 @@ NSString *const WLEnglishFontSizeKeyName;
 - (NSDictionary *)sizeParameters;
 - (void)setSizeParameters:(NSDictionary *)sizeParameters;
 
+- (NSDictionary *)attributesForFixedWidth:(NSUInteger)width
+                                 withName:(NSString *)name;
+- (NSDictionary *)attributesForFixedCellWithName:(NSString *)name
+                                   leftAttribute:(unsigned short)left
+                                  rightAttribute:(unsigned short)right;
 - (NSDictionary *)attributesForDoubleByte:(BOOL)doubleByte
                                      bold:(BOOL)bold
-                                    color:(int)color;
+                                    color:(int)color
+                                underline:(BOOL)underline;
+- (NSDictionary *)attributesForDoubleByte:(BOOL)doubleByte
+                                 leftBold:(BOOL)leftBold
+                                leftColor:(int)leftColor
+                                rightBold:(BOOL)rightBold
+                               rightColor:(int)rightColor;
+
 @end
