@@ -663,6 +663,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
 #pragma mark -
 #pragma mark For RSS feed
 - (IBAction)openRSS:(id)sender {
+#if !defined(ENABLE_RSS)
     NSBeginAlertSheet(@"Sorry, RSS mode is not available yet.",
                       nil,
                       nil,
@@ -674,6 +675,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
                       nil,
                       @"Please pay attention to our future versions. Thanks for your cooperation.");
     return;
+#else
     // TODO: uncomment the following code to enable RSS mode.
     if (![_tabView frontMostConnection] || ![[_tabView frontMostConnection] isConnected]) return;
     if (!_rssThread) {
@@ -689,6 +691,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
                           nil,
                           @"In this mode, Welly automatically fetches data and generates RSS feed. To leave, click the button below.\r\rCaution: This feature is very unstable, and works only with SMTH BBS. Try it at your own risk!");
     }
+#endif // ENABLE_RSS
 }
 
 - (void)rssSheetDidClose:(NSWindow *)sheet
@@ -700,6 +703,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
     }
 }
 
+#ifdef ENABLE_RSS
 - (void)fetchFeed {
 	/*
     // FIXME: lots of HARDCODE here
@@ -856,6 +860,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
     [pool drain];
 	 */
 }
+#endif // RSS
 
 // for portal
 /*

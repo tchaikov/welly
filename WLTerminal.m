@@ -273,12 +273,14 @@
 	}
 }
 
+#ifdef ENABLE_RSS
 static NSString *extractString(NSString *row, NSString *start, NSString *end) {
     NSRange rs = [row rangeOfString:start], re = [row rangeOfString:end];
     if (rs.length == 0 || re.length == 0 || re.location <= rs.location)
         return nil;
     return [row substringWithRange:NSMakeRange(rs.location + 1, re.location - rs.location - 1)];    
 }
+#endif
 
 inline static BOOL hasAnyString(NSString *row, NSArray *array) {
 	if (row == nil)
@@ -325,9 +327,11 @@ inline static BOOL hasAnyString(NSString *row, NSArray *array) {
     } else if (hasAnyString(topLine, @[@"版主", @"板主", @"诚征版主中", @"徵求中"])) {
         //NSLog(@"版面");
         _bbsState.state = BBSBrowseBoard;
-//        _bbsState.boardName = extractString(topLine, @"[", @"]");      // smth
-//        if (_bbsState.boardName == nil)
-//            _bbsState.boardName = extractString(topLine, @"《", @"》"); // ptt
+#ifdef ENABLE_RSS
+        _bbsState.boardName = extractString(topLine, @"[", @"]");      // smth
+        if (_bbsState.boardName == nil)
+            _bbsState.boardName = extractString(topLine, @"《", @"》"); // ptt
+#endif
 		if (hasAnyString(thirdLine, @[@"一般模式"]))
 			_bbsState.subState = BBSBrowseBoardNormalMode;
 		else if (hasAnyString(thirdLine, @[@"文摘模式"]))
