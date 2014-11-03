@@ -455,7 +455,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 - (void)confirmReconnect:(NSWindow *)sheet 
 			  returnCode:(int)returnCode 
 			 contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertDefaultReturn) {
+    if (returnCode == NSAlertFirstButtonReturn) {
 		[_tabView.frontMostConnection reconnect];
     }
 }
@@ -577,14 +577,14 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 				returnCode:(int)returnCode 
 			   contextInfo:(void *)contextInfo {
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [NSApp replyToApplicationShouldTerminate:(returnCode == NSAlertDefaultReturn)];
+    [NSApp replyToApplicationShouldTerminate:(returnCode == NSAlertFirstButtonReturn)];
 }
 
 - (void)confirmSheetDidDismiss:(NSWindow *)sheet
 					returnCode:(int)returnCode 
 				   contextInfo:(void *)contextInfo {
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [NSApp replyToApplicationShouldTerminate:(returnCode == NSAlertDefaultReturn)];
+    [NSApp replyToApplicationShouldTerminate:(returnCode == NSAlertFirstButtonReturn)];
 }
 
 #pragma mark -
@@ -652,7 +652,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
 								   alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
 									   otherButton:nil
 						 informativeTextWithFormat:NSLocalizedString(@"If you proceed, you will lost all your current font settings for Welly, and this operation is only encouraged when your font settings are missing. Are you sure you want to continue?", @"Sheet Message")];
-	if ([alert runModal] != NSAlertDefaultReturn)
+	if ([alert runModal] != NSAlertFirstButtonReturn)
 		return;
 	
 	// Set the font settings
@@ -901,7 +901,7 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
 								   alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
 									   otherButton:nil
 						 informativeTextWithFormat:NSLocalizedString(@"Welly will delete this cover file, please confirm.", @"Sheet Message")];
-	if ([alert runModal] == NSAlertDefaultReturn)
+	if ([alert runModal] == NSAlertFirstButtonReturn)
 		[self removeImage];
 	[_sitesWindow setAlphaValue:100];
 }

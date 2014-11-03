@@ -180,19 +180,19 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 #pragma mark -
 #pragma mark safe_paste
 - (void)confirmPaste:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertDefaultReturn) {
+    if (returnCode == NSAlertFirstButtonReturn) {
 		[self performPaste];
     }
 }
 
 - (void)confirmPasteWrap:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertDefaultReturn) {
+    if (returnCode == NSAlertFirstButtonReturn) {
 		[self performPasteWrap];
     }
 }
 
 - (void)confirmPasteColor:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertDefaultReturn) {
+    if (returnCode == NSAlertFirstButtonReturn) {
 		[self performPasteColor];
     }
 }
@@ -838,10 +838,10 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 }
 
 #pragma mark -
-#pragma mark NSTextInput Protocol
-/* NSTextInput protocol */
+#pragma mark NSTextInputClient Protocol
 // instead of keyDown: aString can be NSString or NSAttributedString
-- (void)insertText:(id)aString {
+- (void)insertText:(id)aString
+  replacementRange:(NSRange)replacementRange {
     [self insertText:aString withDelay:0];
 }
 
@@ -903,7 +903,8 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 
 // setMarkedText: cannot take a nil first argument. aString can be NSString or NSAttributedString
 - (void)setMarkedText:(id)aString 
-		selectedRange:(NSRange)selRange {
+		selectedRange:(NSRange)selRange
+     replacementRange:(NSRange)replacementRange {
     WLTerminal *ds = [self frontMostTerminal];
 	if (![aString respondsToSelector:@selector(isEqualToAttributedString:)] && [aString isMemberOfClass:[NSString class]])
 		aString = [[NSAttributedString alloc] initWithString:aString];
@@ -954,7 +955,8 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 }
 
 // Returns attributed string at the range.  This allows input mangers to query any range in backing-store.  May return nil.
-- (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange {
+- (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)theRange
+                                                actualRange:(NSRangePointer)actualRange {
     if (theRange.location >= [_markedText length]) return nil;
     if (theRange.location + theRange.length > [_markedText length]) 
         theRange.length = [_markedText length] - theRange.location;
@@ -972,7 +974,8 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 }
 
 // This method returns the first frame of rects for theRange in screen coordindate system.
-- (NSRect)firstRectForCharacterRange:(NSRange)theRange {
+- (NSRect)firstRectForCharacterRange:(NSRange)theRange
+                         actualRange:(NSRangePointer)actualRange {
     NSPoint pointInWindowCoordinates;
     NSRect rectInScreenCoordinates;
 

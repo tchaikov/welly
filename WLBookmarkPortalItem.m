@@ -170,7 +170,7 @@
                                    alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
                                        otherButton:nil
                          informativeTextWithFormat:NSLocalizedString(@"Welly will delete this cover file, please confirm.", @"Sheet Message")];
-    if ([alert runModal] == NSAlertDefaultReturn)
+    if ([alert runModal] == NSAlertFirstButtonReturn)
         [self setCoverWithFile:nil];
 }
 @end

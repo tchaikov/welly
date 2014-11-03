@@ -89,7 +89,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLComposePanelController);
                                        alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
                                            otherButton:nil
                              informativeTextWithFormat:NSLocalizedString(@"It seems that you are not in edit mode. Using composer now may cause unpredictable behaviors. Are you sure you want to continue?", @"Sheet Message")];
-        if ([alert runModal] != NSAlertDefaultReturn)
+        if ([alert runModal] != NSAlertFirstButtonReturn)
             return;
     }
 	// Set working telnet view
