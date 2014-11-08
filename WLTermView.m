@@ -34,7 +34,6 @@ static NSImage *gLeftImage;
     [self setFrameSize:[gConfig contentSize]];
 
     _backedImage = [[NSImage alloc] initWithSize:[gConfig contentSize]];
-    [_backedImage setFlipped:NO];
 
     gLeftImage = [[NSImage alloc] initWithSize:NSMakeSize(_fontWidth, _fontHeight)];
 
