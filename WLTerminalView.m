@@ -126,7 +126,11 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 }
 
 - (NSPoint)mouseLocationInView {
-	return [self convertPoint:[[self window] convertScreenToBase:[NSEvent mouseLocation]] fromView:nil];
+    NSPoint mouseLocation = [NSEvent mouseLocation];
+    NSRect rect = [self.window convertRectFromScreen:NSMakeRect(mouseLocation.x,
+                                                                mouseLocation.y,
+                                                                0, 0)];
+    return [self convertPoint:rect.origin fromView:nil];
 }
 
 - (NSRange)rangeForWordAtPoint:(NSPoint)point {
@@ -952,15 +956,9 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 // This method returns the first frame of rects for theRange in screen coordindate system.
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
                          actualRange:(NSRangePointer)actualRange {
-    NSPoint pointInWindowCoordinates;
-    NSRect rectInScreenCoordinates;
-
-    pointInWindowCoordinates = [_textField frame].origin;
-    //[_textField convertPoint: [_textField frame].origin toView: nil];
-    rectInScreenCoordinates.origin = [[_textField window] convertBaseToScreen:pointInWindowCoordinates];
-    rectInScreenCoordinates.size = [_textField bounds].size;
-
-    return rectInScreenCoordinates;
+    NSRect rectInWindowCoord;
+    rectInWindowCoord = [_textField convertRect:_textField.bounds toView:nil];
+    return [_textField.window convertRectToScreen:rectInWindowCoord];
 }
 
 // This method returns the index for character that is nearest to thePoint.  thPoint is in screen coordinate system.
