@@ -26,6 +26,8 @@
 
 @optional
 
++ (CGFloat)desiredTabBarControlHeight;
+
 // control specific parameters
 - (CGFloat)leftMarginForTabBarControl:(PSMTabBarControl *)tabBarControl;
 - (CGFloat)rightMarginForTabBarControl:(PSMTabBarControl *)tabBarControl;
@@ -38,7 +40,7 @@
 
 // cell values
 - (NSAttributedString *)attributedObjectCountStringValueForTabCell:(PSMTabBarCell *)cell;
-- (NSAttributedString *)attributedStringValueForTabCell:(PSMTabBarCell *)cell;
+- (NSAttributedString *)attributedStringValueForTabCell:(PSMTabBarCell *)cell inTabBarControl:(PSMTabBarControl *)tabBarControl;
 
 // Constraints
 - (CGFloat)minimumWidthOfTabCell:(PSMTabBarCell *)cell;
