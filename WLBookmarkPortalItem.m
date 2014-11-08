@@ -165,11 +165,11 @@
 }
 
 - (void)draggedToRemove:(id)sender {
-	NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Are you sure you want to delete the cover?", @"Sheet Title")
-                                     defaultButton:NSLocalizedString(@"Delete", @"Default Button")
-                                   alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
-                                       otherButton:nil
-                         informativeTextWithFormat:NSLocalizedString(@"Welly will delete this cover file, please confirm.", @"Sheet Message")];
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to delete the cover?", @"Sheet Title");
+    alert.informativeText = NSLocalizedString(@"Welly will delete this cover file, please confirm.", @"Sheet Message");
+    [alert addButtonWithTitle:NSLocalizedString(@"Delete", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
     if ([alert runModal] == NSAlertFirstButtonReturn)
         [self setCoverWithFile:nil];
 }

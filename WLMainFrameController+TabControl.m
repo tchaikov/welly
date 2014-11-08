@@ -86,14 +86,12 @@
     if (![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) 
 		return YES;
 	
-    NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Are you sure you want to close this tab?", @"Sheet Title")
-									 defaultButton:NSLocalizedString(@"Close", @"Default Button")
-								   alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
-									   otherButton:nil
-						 informativeTextWithFormat:NSLocalizedString(@"The connection is still alive. If you close this tab, the connection will be lost. Do you want to close this tab anyway?", @"Sheet Message")];
-    if ([alert runModal] == NSAlertFirstButtonReturn)
-        return YES;
-    return NO;
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to close this tab?", @"Sheet Title");
+    alert.informativeText = NSLocalizedString(@"The connection is still alive. If you close this tab, the connection will be lost. Do you want to close this tab anyway?", @"Sheet Message");
+    [alert addButtonWithTitle:NSLocalizedString(@"Close", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
+    return ([alert runModal] == NSAlertFirstButtonReturn);
 }
 
 - (void)tabView:(NSTabView *)tabView willCloseTabViewItem:(NSTabViewItem *)tabViewItem {

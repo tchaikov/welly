@@ -440,15 +440,11 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 - (BOOL)shouldReconnect {
 	if (!_tabView.frontMostConnection.isConnected) return YES;
     if (![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) return YES;
-    NSBeginAlertSheet(NSLocalizedString(@"Are you sure you want to reconnect?", @"Sheet Title"), 
-                      NSLocalizedString(@"Confirm", @"Default Button"), 
-                      NSLocalizedString(@"Cancel", @"Cancel Button"), 
-                      nil, 
-                      _mainWindow, self, 
-                      @selector(confirmSheetDidEnd:returnCode:contextInfo:), 
-                      @selector(confirmSheetDidDismiss:returnCode:contextInfo:), 
-                      nil, 
-                      NSLocalizedString(@"The connection is still alive. If you reconnect, the current connection will be lost. Do you want to reconnect anyway?", @"Sheet Message"));
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to reconnect?", @"Sheet Title");
+    alert.informativeText = NSLocalizedString(@"The connection is still alive. If you reconnect, the current connection will be lost. Do you want to reconnect anyway?", @"Sheet Message");
+    [alert addButtonWithTitle:NSLocalizedString(@"Confirm", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
     return NO;
 }
 
@@ -465,16 +461,18 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 		[_tabView.frontMostConnection reconnect];
         return;
     }
-    NSBeginAlertSheet(NSLocalizedString(@"Are you sure you want to reconnect?", @"Sheet Title"), 
-                      NSLocalizedString(@"Confirm", @"Default Button"), 
-                      NSLocalizedString(@"Cancel", @"Cancel Button"), 
-                      nil, 
-                      _mainWindow, self, 
-                      @selector(confirmReconnect:returnCode:contextInfo:), 
-                      nil, 
-                      nil, 
-                      NSLocalizedString(@"The connection is still alive. If you reconnect, the current connection will be lost. Do you want to reconnect anyway?", @"Sheet Message"));
-    return;	
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to reconnect?", @"Sheet Title");
+    alert.informativeText = NSLocalizedString(@"The connection is still alive. If you reconnect, the current connection will be lost. Do you want to reconnect anyway?", @"Sheet Message");
+    [alert addButtonWithTitle:NSLocalizedString(@"Confirm", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
+    [alert beginSheetModalForWindow:_mainWindow
+                  completionHandler:^(NSModalResponse returnCode) {
+                      [self confirmReconnect:_mainWindow
+                                  returnCode:returnCode
+                                 contextInfo:NULL];
+                  }];
+    return;
 }
 
 - (IBAction)openSiteMenu:(id)sender {
@@ -559,17 +557,25 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
             ++connectedConnection;
     }
     if (connectedConnection == 0) return YES;
-    NSBeginAlertSheet(NSLocalizedString(@"Are you sure you want to quit Welly?", @"Sheet Title"), 
-                      NSLocalizedString(@"Quit", @"Default Button"), 
-                      NSLocalizedString(@"Cancel", @"Cancel Button"), 
-                      nil, 
-                      _mainWindow,
-					  self, 
-                      @selector(confirmSheetDidEnd:returnCode:contextInfo:), 
-                      @selector(confirmSheetDidDismiss:returnCode:contextInfo:), nil,
-                      NSLocalizedString(@"There are %d tabs open in Welly. Do you want to quit anyway?",
-                                        @"Sheet Message"),
-                      connectedConnection);
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to quit Welly?", @"Sheet Title");
+    alert.informativeText = [NSString localizedStringWithFormat:NSLocalizedString(@"There are %d tabs open in Welly. Do you want to quit anyway?",
+                                                                                  @"Sheet Message"),
+                                connectedConnection];
+    [alert addButtonWithTitle:NSLocalizedString(@"Quit", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
+    [alert beginSheetModalForWindow:_mainWindow
+                  completionHandler:^(NSModalResponse returnCode) {
+                      switch (returnCode) {
+                          case NSAlertFirstButtonReturn:
+                              return [self confirmSheetDidEnd:_mainWindow returnCode:returnCode contextInfo:nil];
+                          case NSAlertSecondButtonReturn:
+                              return [self confirmSheetDidDismiss:_mainWindow returnCode:returnCode contextInfo:nil];
+                          default:
+                              return;
+                      }
+                  }];
     return NSTerminateLater;
 }
 
@@ -647,11 +653,11 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
 #pragma mark -
 #pragma mark For restore settings
 - (IBAction)restoreSettings:(id)sender {
-	NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Are you sure you want to restore all your font settings?", @"Sheet Title")
-									 defaultButton:NSLocalizedString(@"Confirm", @"Default Button")
-								   alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
-									   otherButton:nil
-						 informativeTextWithFormat:NSLocalizedString(@"If you proceed, you will lost all your current font settings for Welly, and this operation is only encouraged when your font settings are missing. Are you sure you want to continue?", @"Sheet Message")];
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to restore all your font settings?", @"Sheet Title");
+    alert.informativeText = NSLocalizedString(@"If you proceed, you will lost all your current font settings for Welly, and this operation is only encouraged when your font settings are missing. Are you sure you want to continue?", @"Sheet Message");
+    [alert addButtonWithTitle:NSLocalizedString(@"Confirm", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
 	if ([alert runModal] != NSAlertFirstButtonReturn)
 		return;
 	
@@ -664,16 +670,11 @@ withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
 #pragma mark For RSS feed
 - (IBAction)openRSS:(id)sender {
 #if !defined(ENABLE_RSS)
-    NSBeginAlertSheet(@"Sorry, RSS mode is not available yet.",
-                      nil,
-                      nil,
-                      nil,
-                      _mainWindow,
-                      self,
-                      nil,
-                      nil,
-                      nil,
-                      @"Please pay attention to our future versions. Thanks for your cooperation.");
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = @"Sorry, RSS mode is not available yet.";
+    alert.informativeText = @"Please pay attention to our future versions. Thanks for your cooperation.";
+    [alert beginSheetModalForWindow:_mainWindow
+                  completionHandler:nil];
     return;
 #else
     // TODO: uncomment the following code to enable RSS mode.

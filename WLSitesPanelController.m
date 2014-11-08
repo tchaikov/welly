@@ -159,16 +159,11 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLSitesPanelController);
         return;
 	[_sitesPanel setLevel:0];
     if (![siteAddress hasPrefix:@"ssh"] && [siteAddress rangeOfString:@"@"].location == NSNotFound) {
-        NSBeginAlertSheet(NSLocalizedString(@"Site address format error", @"Sheet Title"),
-                          nil,
-                          nil,
-                          nil,
-                          _sitesPanel,
-                          self,
-                          nil,
-                          nil,
-                          nil,
-                          NSLocalizedString(@"Your BBS ID (username) should be provided explicitly by \"id@\" in the site address field in order to use auto-login for telnet connections.", @"Sheet Message"));
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Site address format error", @"Sheet Title");
+        alert.informativeText = NSLocalizedString(@"Your BBS ID (username) should be provided explicitly by \"id@\" in the site address field in order to use auto-login for telnet connections.", @"Sheet Message");
+        [alert beginSheetModalForWindow:_sitesPanel
+                      completionHandler:nil];
         return;
     }
     [NSApp beginSheet:_passwordPanel

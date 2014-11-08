@@ -84,11 +84,11 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLComposePanelController);
 	// Propose a warning if necessary
 	if ([telnetView respondsToSelector:@selector(shouldWarnCompose)] &&
 		[telnetView shouldWarnCompose]) {
-        NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Are you sure you want to open the composer?", @"Sheet Title")
-                                         defaultButton:NSLocalizedString(@"Confirm", @"Default Button")
-                                       alternateButton:NSLocalizedString(@"Cancel", @"Cancel Button")
-                                           otherButton:nil
-                             informativeTextWithFormat:NSLocalizedString(@"It seems that you are not in edit mode. Using composer now may cause unpredictable behaviors. Are you sure you want to continue?", @"Sheet Message")];
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Are you sure you want to open the composer?", @"Sheet Title");
+        alert.informativeText = NSLocalizedString(@"It seems that you are not in edit mode. Using composer now may cause unpredictable behaviors. Are you sure you want to continue?", @"Sheet Message");
+        [alert addButtonWithTitle:NSLocalizedString(@"Confirm", @"Default Button")];
+        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
         if ([alert runModal] != NSAlertFirstButtonReturn)
             return;
     }

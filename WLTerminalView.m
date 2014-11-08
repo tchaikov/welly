@@ -37,19 +37,6 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
     return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || (c == '-') || (c == '_') || (c == '.');
 }
 
-
-@interface WLTerminalView ()
-- (void)drawSelection;
-
-// safe_paste
-- (void)confirmPaste:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
-- (void)confirmPasteWrap:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
-- (void)confirmPasteColor:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
-- (void)performPaste;
-- (void)performPasteWrap;
-- (void)performPasteColor;
-@end
-
 @implementation WLTerminalView
 @synthesize isInUrlMode = _isInUrlMode;
 @synthesize isMouseActive = _isMouseActive;
@@ -179,24 +166,6 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 
 #pragma mark -
 #pragma mark safe_paste
-- (void)confirmPaste:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertFirstButtonReturn) {
-		[self performPaste];
-    }
-}
-
-- (void)confirmPasteWrap:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertFirstButtonReturn) {
-		[self performPasteWrap];
-    }
-}
-
-- (void)confirmPasteColor:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertFirstButtonReturn) {
-		[self performPasteColor];
-    }
-}
-
 - (void)performPaste {
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	NSArray *types = [pb types];
@@ -391,17 +360,18 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 	[self writePDFInsideRect:imageRect toPasteboard:pb];
 }
 
-- (void)warnPasteWithSelector:(SEL)didEndSelector {
-	NSBeginAlertSheet(NSLocalizedString(@"Are you sure you want to paste?", @"Sheet Title"),
-					  NSLocalizedString(@"Confirm", @"Default Button"),
-					  NSLocalizedString(@"Cancel", @"Cancel Button"),
-					  nil,
-					  [self window],
-					  self,
-					  didEndSelector,
-					  nil,
-					  nil,
-					  NSLocalizedString(@"It seems that you are not in edit mode. Pasting may cause unpredictable behaviors. Are you sure you want to paste?", @"Sheet Message"));
+- (void)warnPasteWithBlock:(void (^)(void))block {
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to paste?", @"Sheet Title");
+    alert.informativeText = NSLocalizedString(@"It seems that you are not in edit mode. Pasting may cause unpredictable behaviors. Are you sure you want to paste?", @"Sheet Message");
+    [alert addButtonWithTitle:NSLocalizedString(@"Confirm", @"Default Button")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel Button")];
+    [alert beginSheetModalForWindow:self.window
+                  completionHandler:^(NSModalResponse returnCode) {
+                      if (returnCode == NSAlertFirstButtonReturn) {
+                          block();
+                      }
+                  }];
 }
 
 - (BOOL)shouldWarnPaste {
@@ -409,34 +379,40 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 }
 
 - (void)pasteColor:(id)sender {
-    if (![self isConnected]) return;
-	if ([self shouldWarnPaste]) {
-		[self warnPasteWithSelector:@selector(confirmPasteColor:returnCode:contextInfo:)];
+    if (!self.isConnected) return;
+	if (self.shouldWarnPaste) {
+        [self warnPasteWithBlock:^{
+            [self performPasteColor];
+        }];
 	} else {
 		[self performPasteColor];
 	}
 }
 
 - (void)paste:(id)sender {
-    if (![self isConnected]) return;
-	if ([self shouldWarnPaste]) {
-		[self warnPasteWithSelector:@selector(confirmPaste:returnCode:contextInfo:)];
+    if (!self.isConnected) return;
+    if (self.shouldWarnPaste) {
+        [self warnPasteWithBlock:^{
+            [self performPaste];
+        }];
 	} else {
 		[self performPaste];
 	}
 }
 
 - (void)pasteWrap:(id)sender {
-    if (![self isConnected]) return;
-	if ([self shouldWarnPaste]) {
-		[self warnPasteWithSelector:@selector(confirmPasteWrap:returnCode:contextInfo:)];
+    if (!self.isConnected) return;
+    if (self.shouldWarnPaste) {
+        [self warnPasteWithBlock:^{
+            [self performPasteWrap];
+        }];
 	} else {
 		[self performPasteWrap];
 	}
 }
 
 - (void)selectAll:(id)sender {
-    if (![self isConnected]) return;
+    if (!self.isConnected) return;
     _selectionLocation = 0;
     _selectionLength = _maxRow * _maxColumn;
     [self setNeedsDisplay:YES];
@@ -540,7 +516,7 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 
 - (void)mouseUp:(NSEvent *)theEvent {
     [self hasMouseActivity];
-    if (![self isConnected]) return;
+    if (!self.isConnected) return;
     // open url
     if (abs(_selectionLength) <= 1 && _isNotCancelingSelection && !_isKeying && !_isInUrlMode) {
 		[_mouseBehaviorDelegate mouseUp:theEvent];
@@ -574,7 +550,7 @@ BOOL isEnglishNumberAlphabet(unsigned char c) {
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
-    if (![self isConnected])
+    if (!self.isConnected)
         return nil;
     NSString *s = [self selectedPlainString];
 	if (s != nil)
