@@ -52,7 +52,6 @@
 @end
 
 @implementation WLMainFrameController
-@synthesize tabView = _tabView;
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 

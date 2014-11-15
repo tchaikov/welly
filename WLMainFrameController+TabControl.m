@@ -80,8 +80,7 @@
 	[self exitPresentationMode];
 	
 	// TODO: why not put these in WLTabView?
-    if (![[[tabViewItem identifier] content] isKindOfClass:[WLConnection class]] ||
-		![[[tabViewItem identifier] content] isConnected]) 
+    if (![[[tabViewItem identifier] content] isConnected])
 		return YES;
     if (![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) 
 		return YES;

@@ -13,9 +13,19 @@
 @interface WLDummyCellContentProvider : NSObject <WLTabBarCellContentProvider> {
 	
 }
+
+// controllers might want to check isConnected before actually accessing
+// the connection in it
+@property (nonatomic, readonly) BOOL isConnected;
+
 @end
 
 @implementation WLDummyCellContentProvider
+
+- (BOOL)isConnected {
+    return NO;
+}
+
 - (BOOL)isProcessing {
 	return NO;
 }
