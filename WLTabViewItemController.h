@@ -7,11 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-@protocol WLTabBarCellContentProvider;
+#import <MMTabBarView/MMTabBarItem.h>
 
-@interface WLTabViewItemController : NSObjectController {
+@interface WLEmptyTabBarItem : NSObject <MMTabBarItem> {
 }
-// Get a controller with dummy content
-+ (WLTabViewItemController *)emptyTabViewItemController;
-- (id)initWithContent:(id)content;
+
 @end

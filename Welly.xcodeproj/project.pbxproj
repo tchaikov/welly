@@ -24,7 +24,6 @@
 		16BF97BD0E3D9B7600ED990A /* WLIntegerArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BF97BC0E3D9B7600ED990A /* WLIntegerArray.m */; };
 		16C0C90F0E294C2700B576C5 /* WLPTY.m in Sources */ = {isa = PBXBuildFile; fileRef = 16C0C90E0E294C2700B576C5 /* WLPTY.m */; };
 		16DC3D090E3338B70060E8F0 /* online.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 16DC3D080E3338B70060E8F0 /* online.pdf */; };
-		16FEC3210E2A80B50035DADD /* WLTabBarControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 16FEC3200E2A80B50035DADD /* WLTabBarControl.m */; };
 		1841E73E0F7BD280002DCBA8 /* WLProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1841E73D0F7BD280002DCBA8 /* WLProxy.m */; };
 		185680E60F25E23B00A1F4F3 /* password.tif in Resources */ = {isa = PBXBuildFile; fileRef = 185680E50F25E23B00A1F4F3 /* password.tif */; };
 		186E810F0F218C10007D73BC /* WLComposePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 186E810E0F218C10007D73BC /* WLComposePanelController.m */; };
@@ -84,7 +83,6 @@
 		81FEAD320EFE91BD0051C867 /* waiting.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 81FEAD310EFE91BD0051C867 /* waiting.pdf */; };
 		85137B330D02192800833909 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 85137B320D02192800833909 /* Credits.rtf */; };
 		85145AAE0AB40192009FC710 /* WLTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = 85145AAD0AB40192009FC710 /* WLTerminal.m */; };
-		8540F7250CEB43FF003B17D1 /* PSMTabBarControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8540F7240CEB43FF003B17D1 /* PSMTabBarControl.framework */; };
 		8570AD5F0A3923A900838442 /* WLTerminalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8570AD5E0A3923A900838442 /* WLTerminalView.m */; };
 		8579CA2A0CF21D3D005A8353 /* WLSite.m in Sources */ = {isa = PBXBuildFile; fileRef = 8579CA290CF21D3D005A8353 /* WLSite.m */; };
 		857EAE4F0CF1D89300777C15 /* offline.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 857EAE4E0CF1D89300777C15 /* offline.pdf */; };
@@ -103,9 +101,9 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9425A6591A17BBA800359BED /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9425A6581A17BBA800359BED /* MMTabBarView.framework */; };
 		945C31AE1775ED650032DEE0 /* DownloadItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 945C31AD1775ED650032DEE0 /* DownloadItem.m */; };
 		9473BF7417760F8E00D31AF5 /* WLTerminalView+QuickLook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */; };
-		94A3C9B71773471100B5A498 /* PSMTabBarControl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8540F7240CEB43FF003B17D1 /* PSMTabBarControl.framework */; };
 		94FE02EB177B4DF1004BA304 /* WLPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FE02EA177B4DF1004BA304 /* WLPrefsWindowController.m */; };
 		D64A480B11E90350008ACEBD /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D64A480A11E90350008ACEBD /* Growl.framework */; };
 		D64A480E11E90356008ACEBD /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D64A480A11E90350008ACEBD /* Growl.framework */; };
@@ -121,7 +119,6 @@
 				D64A480E11E90356008ACEBD /* Growl.framework in CopyFiles */,
 				5A9C08230F5D8C320033B8E6 /* Sparkle.framework in CopyFiles */,
 				07B3708E0D6840BB0035E87D /* HMBlkAppKit.framework in CopyFiles */,
-				94A3C9B71773471100B5A498 /* PSMTabBarControl.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,8 +156,6 @@
 		16C0C90D0E294C2700B576C5 /* WLPTY.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLPTY.h; sourceTree = "<group>"; };
 		16C0C90E0E294C2700B576C5 /* WLPTY.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLPTY.m; sourceTree = "<group>"; };
 		16DC3D080E3338B70060E8F0 /* online.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = online.pdf; sourceTree = "<group>"; };
-		16FEC31F0E2A80B50035DADD /* WLTabBarControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLTabBarControl.h; sourceTree = "<group>"; };
-		16FEC3200E2A80B50035DADD /* WLTabBarControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLTabBarControl.m; sourceTree = "<group>"; };
 		1841E73C0F7BD280002DCBA8 /* WLProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLProxy.h; sourceTree = "<group>"; };
 		1841E73D0F7BD280002DCBA8 /* WLProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLProxy.m; sourceTree = "<group>"; };
 		185680E50F25E23B00A1F4F3 /* password.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = password.tif; sourceTree = "<group>"; };
@@ -184,7 +179,6 @@
 		5A309A7A0D9A252B00970494 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5A40C3C4118ADED400487AE9 /* WLTabViewItemController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLTabViewItemController.h; sourceTree = "<group>"; };
 		5A40C3C5118ADED400487AE9 /* WLTabViewItemController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLTabViewItemController.m; sourceTree = "<group>"; };
-		5A40C3C7118B179500487AE9 /* WLTabBarCellContentProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLTabBarCellContentProvider.h; sourceTree = "<group>"; };
 		5A43E8730F2E9B570002116B /* WLButtonAreaHotspotHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLButtonAreaHotspotHandler.h; sourceTree = "<group>"; };
 		5A43E8740F2E9B570002116B /* WLButtonAreaHotspotHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLButtonAreaHotspotHandler.m; sourceTree = "<group>"; };
 		5A43E87E0F2E9D270002116B /* WLMouseHotspotHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLMouseHotspotHandler.m; sourceTree = "<group>"; };
@@ -276,7 +270,6 @@
 		85145AAC0AB40192009FC710 /* WLTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLTerminal.h; sourceTree = "<group>"; };
 		85145AAD0AB40192009FC710 /* WLTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLTerminal.m; sourceTree = "<group>"; };
 		852E798A0C96E7A90027751F /* CommonType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonType.h; sourceTree = "<group>"; wrapsLines = 1; };
-		8540F7240CEB43FF003B17D1 /* PSMTabBarControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PSMTabBarControl.framework; sourceTree = "<group>"; };
 		8570AD5D0A3923A900838442 /* WLTerminalView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLTerminalView.h; sourceTree = "<group>"; };
 		8570AD5E0A3923A900838442 /* WLTerminalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLTerminalView.m; sourceTree = "<group>"; };
 		8579CA280CF21D3D005A8353 /* WLSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLSite.h; sourceTree = "<group>"; };
@@ -304,6 +297,8 @@
 		85F7F2070B06EE36000C4CDF /* WLGlobalConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLGlobalConfig.h; sourceTree = "<group>"; };
 		85F7F2080B06EE36000C4CDF /* WLGlobalConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLGlobalConfig.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		9425A6371A17131A00359BED /* MMTabBarView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MMTabBarView.framework; sourceTree = "<group>"; };
+		9425A6581A17BBA800359BED /* MMTabBarView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MMTabBarView.framework; sourceTree = "<group>"; };
 		945C31AC1775ED650032DEE0 /* DownloadItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadItem.h; sourceTree = "<group>"; };
 		945C31AD1775ED650032DEE0 /* DownloadItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadItem.m; sourceTree = "<group>"; };
 		9473BF7217760F8E00D31AF5 /* WLTerminalView+QuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WLTerminalView+QuickLook.h"; sourceTree = "<group>"; };
@@ -319,12 +314,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				8540F7250CEB43FF003B17D1 /* PSMTabBarControl.framework in Frameworks */,
 				85D259470D21039D002BD294 /* IOKit.framework in Frameworks */,
 				07B3707A0D6840B20035E87D /* HMBlkAppKit.framework in Frameworks */,
 				5AB1BDBF0E18F26C0094C370 /* System.framework in Frameworks */,
 				5A38820C0E1D44E50098FA04 /* Foundation.framework in Frameworks */,
 				5A38820D0E1D44E60098FA04 /* AppKit.framework in Frameworks */,
+				9425A6591A17BBA800359BED /* MMTabBarView.framework in Frameworks */,
 				81624CE20E2F8F89009C9987 /* Carbon.framework in Frameworks */,
 				160D6D4B0EE2E5B900CDC416 /* Security.framework in Frameworks */,
 				5A9C07F90F5D8C2C0033B8E6 /* Sparkle.framework in Frameworks */,
@@ -368,6 +363,7 @@
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 				85D259460D21039D002BD294 /* IOKit.framework */,
 				5AB1BDBE0E18F26C0094C370 /* System.framework */,
+				9425A6581A17BBA800359BED /* MMTabBarView.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -393,8 +389,8 @@
 			children = (
 				D64A480A11E90350008ACEBD /* Growl.framework */,
 				07B370790D6840B20035E87D /* HMBlkAppKit.framework */,
-				8540F7240CEB43FF003B17D1 /* PSMTabBarControl.framework */,
 				5A9C07F80F5D8C2C0033B8E6 /* Sparkle.framework */,
+				9425A6371A17131A00359BED /* MMTabBarView.framework */,
 			);
 			name = "Third-Party Frameworks";
 			sourceTree = "<group>";
@@ -490,9 +486,6 @@
 				5ACEAF36117DD1AB0028E7BA /* WLTabView.m */,
 				5A40C3C4118ADED400487AE9 /* WLTabViewItemController.h */,
 				5A40C3C5118ADED400487AE9 /* WLTabViewItemController.m */,
-				5A40C3C7118B179500487AE9 /* WLTabBarCellContentProvider.h */,
-				16FEC31F0E2A80B50035DADD /* WLTabBarControl.h */,
-				16FEC3200E2A80B50035DADD /* WLTabBarControl.m */,
 			);
 			name = "Tab View";
 			sourceTree = "<group>";
@@ -891,7 +884,6 @@
 				5AB1BFF50E18F3260094C370 /* KeyspanFrontRowControl.m in Sources */,
 				5AB1BFF70E18F3260094C370 /* RemoteControlContainer.m in Sources */,
 				16C0C90F0E294C2700B576C5 /* WLPTY.m in Sources */,
-				16FEC3210E2A80B50035DADD /* WLTabBarControl.m in Sources */,
 				1631E8200E2C672700B87A38 /* WLQuickLookBridge.m in Sources */,
 				1631E84E0E2C8D5600B87A38 /* WLPreviewController.m in Sources */,
 				1680A7ED0E2F0F8300A2E175 /* WLBookmarkPortalItem.m in Sources */,
@@ -1035,8 +1027,8 @@
 				DEPLOYMENT_LOCATION = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\"",
+					"$(PROJECT_DIR)/build/Debug",
+					"$(PROJECT_DIR)",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1044,6 +1036,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				OTHER_CFLAGS = "-D__DUMPPACKET__";
 				PRODUCT_NAME = Welly;
 				WRAPPER_EXTENSION = app;
@@ -1059,14 +1052,15 @@
 				DEPLOYMENT_LOCATION = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\"",
+					"$(PROJECT_DIR)/build/Debug",
+					"$(PROJECT_DIR)",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = Welly;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1080,7 +1074,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -1107,7 +1100,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_GC = unsupported;

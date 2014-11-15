@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <MMTabBarView/MMTabBarView.h>
 #import "WLSitesPanelController.h"
 
 #define scrollTimerInterval 0.12
@@ -16,15 +17,12 @@
 @class WLTabBarControl;
 @class WLPresentationController;
 
+@class MMTabBarView;
 @class RemoteControl;
 @class MultiClickRemoteBehavior;
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5
-@protocol NSTabViewDelegate
-@end
-#endif
 
-@interface WLMainFrameController : NSObject <NSTabViewDelegate, WLSitesObserver> {
+@interface WLMainFrameController : NSObject <MMTabBarViewDelegate, WLSitesObserver> {
     /* composeWindow */
     IBOutlet NSTextView *_composeText;
     IBOutlet NSPanel *_composeWindow;
@@ -35,9 +33,6 @@
     IBOutlet id _detectDoubleByteButton;
     IBOutlet id _autoReplyButton;
     IBOutlet id _mouseButton;
-
-    IBOutlet WLTabView *__weak _tabView;
-    IBOutlet WLTabBarControl *_tabBarControl;
 	
 	/* Menus */
     IBOutlet NSMenuItem *_detectDoubleByteMenuItem;
@@ -72,7 +67,10 @@
 	NSColor *_originalWindowBackgroundColor;
 	NSDictionary *_originalSizeParameters;
 }
-@property (weak, readonly) WLTabView *tabView;
+
+@property (nonatomic, weak) IBOutlet WLTabView *tabView;
+@property (nonatomic, weak) IBOutlet MMTabBarView *tabBarView;
+
 
 + (WLMainFrameController *)sharedInstance;
 

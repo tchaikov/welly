@@ -132,18 +132,18 @@ const NSTimeInterval DEFAULT_CLICK_TIME_DIFFERENCE = 0.25;	// for remote control
 	}
 	
 	if (cmd != nil) {
-		[[_tabView frontMostConnection] sendText:cmd];
+		[[self.tabView frontMostConnection] sendText:cmd];
 	}
 }
 
 // TODO: use responder instead of finding the connection!!
 // for timer
 - (void)doScrollDown:(NSTimer*)timer {
-    [[_tabView frontMostConnection] sendText:termKeyDown];
+    [[self.tabView frontMostConnection] sendText:termKeyDown];
 }
 
 - (void)doScrollUp:(NSTimer*)timer {
-    [[_tabView frontMostConnection] sendText:termKeyUp];
+    [[self.tabView frontMostConnection] sendText:termKeyUp];
 }
 
 - (void)disableTimer {

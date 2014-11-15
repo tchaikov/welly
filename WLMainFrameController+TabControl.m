@@ -8,13 +8,12 @@
 
 #import "WLMainFrameController+TabControl.h"
 
-#import <PSMTabBarControl/PSMTabBarControl.h>
-
-#import "WLTabBarControl.h"
 #import "WLTabView.h"
 #import "WLConnection.h"
 #import "WLSite.h"
 #import "WLGlobalConfig.h"
+
+#import <MMTabBarView/MMTabBarView.h>
 
 @interface WLMainFrameController ()
 
@@ -27,60 +26,82 @@
 
 - (void)initializeTabControl {
 	// tab control style
-    [_tabBarControl setCanCloseOnlyTab:YES];
-    //NSAssert([_tabBarControl delegate] == self, @"set in .nib");
-    //show a new-tab button
-    [_tabBarControl setShowAddTabButton:YES];
-    NSButton *button = (NSButton *)[_tabBarControl addTabButton];
-    button.target = self;
-    button.action = @selector(newTab:);
-    //_tabView = (WLTabView *)[_tabBarControl tabView];
-	
-    // open the portal
+    [self.tabBarView setStyleNamed:@"Safari"];
+    self.tabBarView.canCloseOnlyTab = YES;
+    // show a new-tab button
+    self.tabBarView.showAddTabButton = YES;
+    // show close button
+    self.tabBarView.disableTabClose = NO;
+    self.tabBarView.onlyShowCloseOnHover = YES;
+    self.tabBarView.hideForSingleTab = NO;
+    self.tabBarView.allowsBackgroundTabClosing = YES;
     // the switch
-    [self tabViewDidChangeNumberOfTabViewItems:_tabView];
-	[_tabBarControl setMainController:self];
+    [self tabViewDidChangeNumberOfTabViewItems:self.tabView];
 }
 
 #pragma mark -
 #pragma mark Actions
 - (IBAction)newTab:(id)sender {
-	// Draw the portal and entering the portal control mode if needed...
-	if ([WLGlobalConfig shouldEnableCoverFlow]) {
-		[_tabView newTabWithCoverFlowPortal];
-	} else {
-		[self newConnectionWithSite:[WLSite site]];
-		// let user input
-		[_mainWindow makeFirstResponder:_addressBar];
-	}
+    [self addNewTabToTabView:self.tabView];
 }
 
 - (IBAction)selectNextTab:(id)sender {
-    [_tabBarControl selectNextTabViewItem:sender];
+    
+    NSTabViewItem *item = self.tabView.selectedTabViewItem;
+    if (!item)
+        return;
+    if ([self.tabView indexOfTabViewItem:item] == [self.tabView numberOfTabViewItems] - 1) {
+        [self.tabView selectFirstTabViewItem:sender];
+    } else {
+        [self.tabView selectNextTabViewItem:sender];
+    }
 }
 
 - (IBAction)selectPrevTab:(id)sender {
-    [_tabBarControl selectPreviousTabViewItem:sender];
+    NSTabViewItem *item = self.tabView.selectedTabViewItem;
+    if (!item)
+        return;
+    if ([self.tabView indexOfTabViewItem:item] == 0) {
+        [self.tabView selectLastTabViewItem:sender];
+    } else {
+        [self.tabView selectPreviousTabViewItem:sender];
+    }
 }
 
 - (IBAction)closeTab:(id)sender {
-    if ([_tabView numberOfTabViewItems] == 0) return;
+    NSTabViewItem *item = self.tabView.selectedTabViewItem;
+    if (!item) return;
 	// Here, sometimes it may throw a exception...
 	@try {
-		[_tabBarControl removeTabViewItem:[_tabView selectedTabViewItem]];
+        if ([self tabView:self.tabView shouldCloseTabViewItem:item]) {
+            [self tabView:self.tabView willCloseTabViewItem:item];
+            [self.tabView removeTabViewItem:item];
+        }
 	}
 	@catch (NSException * e) {
 	}
 }
 
 #pragma mark -
-#pragma mark TabView delegation
+#pragma mark MMTabBarViewDelegate
+
+- (void)addNewTabToTabView:(NSTabView *)aTabView {
+    // Draw the portal and entering the portal control mode if needed...
+    if ([WLGlobalConfig shouldEnableCoverFlow]) {
+        [self.tabView newTabWithCoverFlowPortal];
+    } else {
+        [self newConnectionWithSite:[WLSite site]];
+        // let user input
+        [_mainWindow makeFirstResponder:_addressBar];
+    }
+}
+
 - (BOOL)tabView:(NSTabView *)tabView shouldCloseTabViewItem:(NSTabViewItem *)tabViewItem {
 	// Restore from full screen firstly
 	[self exitPresentationMode];
 	
 	// TODO: why not put these in WLTabView?
-    if (![[[tabViewItem identifier] content] isConnected])
+    if (![[tabViewItem identifier] isConnected])
 		return YES;
     if (![[NSUserDefaults standardUserDefaults] boolForKey:WLConfirmOnCloseEnabledKeyName]) 
 		return YES;
@@ -95,15 +116,16 @@
 
 - (void)tabView:(NSTabView *)tabView willCloseTabViewItem:(NSTabViewItem *)tabViewItem {
     // close the connection
-	if ([[[tabViewItem identifier] content] isKindOfClass:[WLConnection class]])
-		[[[tabViewItem identifier] content] close];
+	if ([[tabViewItem identifier] isKindOfClass:[WLConnection class]])
+		[[tabViewItem identifier] close];
 }
 
 - (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem {
-    NSAssert(tabView == _tabView, @"tabView");
+    NSAssert(tabView == self.tabView, @"tabView");
 	[_addressBar setStringValue:@""];
-	if ([[[tabViewItem identifier] content] isKindOfClass:[WLConnection class]]) {
-		WLConnection *connection = [[tabViewItem identifier] content];
+    id identifier = [tabViewItem identifier];
+	if ([identifier isKindOfClass:[WLConnection class]]) {
+		WLConnection *connection = identifier;
 		WLSite *site = [connection site];
 		if (connection && [site address]) {
 			[_addressBar setStringValue:[site address]];

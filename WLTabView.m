@@ -11,7 +11,6 @@
 #import "WLTerminal.h"
 #import "WLTerminalView.h"
 #import "WLMainFrameController.h"
-#import "WLTabBarControl.h"
 
 #import "WLTabViewItemController.h"
 
@@ -95,8 +94,9 @@
 }
 
 - (WLConnection *)frontMostConnection {
-	if ([[[[self selectedTabViewItem] identifier] content] isKindOfClass:[WLConnection class]]) {
-		return [[[self selectedTabViewItem] identifier] content];
+    id identifier = [[self selectedTabViewItem] identifier];
+	if ([identifier isKindOfClass:[WLConnection class]]) {
+		return identifier;
 	}
 	
 	return nil;
@@ -123,7 +123,7 @@
         tabViewItem = [self selectedTabViewItem];
 	} else {	
 		// open a new tab
-		tabViewItem = [[NSTabViewItem alloc] initWithIdentifier:[WLTabViewItemController emptyTabViewItemController]];
+		tabViewItem = [[NSTabViewItem alloc] initWithIdentifier:[[WLEmptyTabBarItem alloc] init]];
 		// this will invoke tabView:didSelectTabViewItem for the first tab
         [self addTabViewItem:tabViewItem];
 	}
@@ -133,8 +133,7 @@
 - (void)newTabWithConnection:(WLConnection *)theConnection 
 					   label:(NSString *)theLabel {	
 	NSTabViewItem *tabViewItem = [self emptyTab];
-
-	[[tabViewItem identifier] setContent:theConnection];
+    tabViewItem.identifier = theConnection;
 	
 	// set appropriate label
 	if (theLabel) {
@@ -207,7 +206,7 @@
 	[[self window] makeKeyWindow];
 
 	if ([currentView conformsToProtocol:@protocol(WLTabItemContentObserver)]) {
-		[(id <WLTabItemContentObserver>)currentView didChangeContent:[[[self selectedTabViewItem] identifier] content]];
+		[(id <WLTabItemContentObserver>)currentView didChangeContent:[[self selectedTabViewItem] identifier]];
 	}
 	
 	if ((oldView != currentView) && [oldView conformsToProtocol:@protocol(WLTabItemContentObserver)]) {
@@ -282,7 +281,7 @@
 		// These re-ordering will not reflect when calling
 		//  [self selectTabViewItemAtIndex:index];
 		// We here call method from tabBarControl to choose correct tab
-		[_tabBarControl selectTabViewItemAtIndex:([[event characters] intValue]-1)];
+		[_tabBarView selectTabViewItemAtIndex:([[event characters] intValue]-1)];
 		return YES;
 	} else if (([event modifierFlags] & NSCommandKeyMask) == 0 && 
 			   ([event modifierFlags] & NSAlternateKeyMask) == 0 && 

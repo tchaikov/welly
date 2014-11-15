@@ -11,7 +11,6 @@
 #define NSLog_Point(point) NSLog(@#point ": (%f, %f)", point.x, point.y)
 
 #import "WLMainFrameController.h"
-#import "WLTabBarControl.h"
 #import "WLMainFrameController+FullScreen.h"
 #import "WLGlobalConfig.h"
 #import "WLTabView.h"
@@ -64,16 +63,16 @@
 
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification {
-	[_tabBarControl setHidden:YES];
+    self.tabBarView.hidden = YES;
 		
 	// Back up the original frame of _targetView
-	_originalFrame = [_tabView frame];
+	_originalFrame = self.tabView.frame;
 	
 	// Get the fittest ratio for the expansion
 	NSRect screenRect = [[NSScreen mainScreen] frame];
 	
-	CGFloat ratioH = screenRect.size.height / [_tabView frame].size.height;
-	CGFloat ratioW = screenRect.size.width / [_tabView frame].size.width;
+	CGFloat ratioH = screenRect.size.height / _originalFrame.size.height;
+	CGFloat ratioW = screenRect.size.width / _originalFrame.size.width;
 	_screenRatio = (ratioH > ratioW) ? ratioW : ratioH;
 	
 	// Then, do the expansion
@@ -81,7 +80,8 @@
 	
 	// Record new origin
 	
-	NSPoint newOP = {(screenRect.size.width - [_tabView frame].size.width) / 2, (screenRect.size.height - [_tabView frame].size.height) / 2};
+	NSPoint newOP = {(screenRect.size.width - _originalFrame.size.width) / 2,
+                     (screenRect.size.height - _originalFrame.size.height) / 2};
 	
 	// Set the window style
 	[_mainWindow setOpaque:YES];
@@ -91,7 +91,7 @@
 	[_mainWindow setBackgroundColor:[[WLGlobalConfig sharedInstance] colorBG]];
 	
 	// Move the origin point
-	[_tabView setFrameOrigin:newOP];
+	[self.tabView setFrameOrigin:newOP];
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification {
@@ -99,14 +99,14 @@
 }
 
 - (void)windowWillExitFullScreen:(NSNotification *)notification {
-	[_tabBarControl setHidden:NO];
-	
+    self.tabBarView.hidden = NO;
+    
 	// Set the size back
 	[self setFont:NO];
 	
 	[_mainWindow setOpaque:NO];
 	// Move view back
-	[_tabView setFrame:_originalFrame];
+    self.tabBarView.frame = _originalFrame;
 	[_mainWindow setBackgroundColor:_originalWindowBackgroundColor];
 }
 

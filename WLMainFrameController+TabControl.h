@@ -18,4 +18,5 @@
 - (IBAction)selectNextTab:(id)sender;
 - (IBAction)selectPrevTab:(id)sender;
 - (IBAction)closeTab:(id)sender;
+
 @end

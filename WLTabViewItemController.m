@@ -7,62 +7,18 @@
 //
 
 #import "WLTabViewItemController.h"
-#import "WLTabBarCellContentProvider.h"
 
-// A dummy tab bar cell content provider, for default use
-@interface WLDummyCellContentProvider : NSObject <WLTabBarCellContentProvider> {
-	
-}
-
-// controllers might want to check isConnected before actually accessing
-// the connection in it
-@property (nonatomic, readonly) BOOL isConnected;
-
-@end
-
-@implementation WLDummyCellContentProvider
+@implementation WLEmptyTabBarItem
 
 - (BOOL)isConnected {
     return NO;
 }
 
-- (BOOL)isProcessing {
-	return NO;
-}
+#pragma mark MMTabBarItem
 
-- (NSImage *)icon {
-	return nil;
-}
-
-- (NSInteger)objectCount {
-	return 0;
-}
-
-+ (WLDummyCellContentProvider *)dummyContentProvider {
-	return [[WLDummyCellContentProvider alloc] init];
-}
-@end
-
-@implementation WLTabViewItemController
-
-+ (WLTabViewItemController *)emptyTabViewItemController {
-	return [[WLTabViewItemController alloc] initWithContent:nil];
-}
-
-- (id)initWithContent:(id)content {
-	NSAssert(!content || [content conformsToProtocol:@protocol(WLTabBarCellContentProvider)], @"should be tab bar cell content provider!!");
-	return [super initWithContent:content];
-}
-
-- (void)setContent:(id)content {
-	NSAssert(!content || [content conformsToProtocol:@protocol(WLTabBarCellContentProvider)], @"should be tab bar cell content provider!!");
-	if (content) {
-		[super setContent:content];
-		if ([content respondsToSelector:@selector(setTabViewItemController:)])
-			[content performSelector:@selector(setTabViewItemController:) withObject:self];
-	} else {
-		[super setContent:[WLDummyCellContentProvider dummyContentProvider]];
-	}
+- (BOOL)hasCloseButton {
+    return YES;
 }
 
 @end
+

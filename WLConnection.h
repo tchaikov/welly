@@ -10,14 +10,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <MMTabBarView/MMTabBarItem.h>
+
 #import "WLProtocol.h"
-#import "WLTabBarCellContentProvider.h"
 
 @class WLSite, WLTerminal, WLTerminalFeeder, WLMessageDelegate;
 
 // modified by boost @ 9#
-// inhert from NSObjectController for PSMTabBarControl
-@interface WLConnection : NSObject <WLTabBarCellContentProvider> {
+@interface WLConnection : NSObject <MMTabBarItem> {
     BOOL _connected;
     
 	WLTerminalFeeder *_feeder;
@@ -30,11 +30,12 @@
 @property (readonly) NSDate *lastTouchDate;
 @property (readonly) NSInteger messageCount;
 @property (readonly) WLMessageDelegate *messageDelegate;
-// for PSMTabBarControl
-@property (readwrite, strong) NSImage *icon;
-@property (readwrite, assign) BOOL isProcessing;
-@property (readwrite, assign) NSInteger objectCount;
-@property (readwrite, weak) id tabViewItemController;
+
+// for MMTabBarItem
+@property (strong) NSImage *icon;
+@property (assign) BOOL isProcessing;
+@property (assign) NSInteger objectCount;
+
 
 - (instancetype)initWithSite:(WLSite *)site;
 

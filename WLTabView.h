@@ -13,7 +13,7 @@
 @class WLCoverFlowPortal;
 @class WLConnection;
 @class WLTerminal;
-@class WLTabBarControl;
+@class MMTabBarView;
 
 @protocol WLTabItemContentObserver
 
@@ -26,15 +26,16 @@
 	NSView *_frontMostView;
 	NSArray *_tabViews;
 	
-	IBOutlet WLTerminalView *_terminalView;
-	IBOutlet WLTabBarControl *_tabBarControl;
-	
 	WLCoverFlowPortal *_portal;
 }
 
 @property (readonly) NSView *frontMostView;
 @property (readonly) WLConnection *frontMostConnection;
 @property (readonly) WLTerminal *frontMostTerminal;
+@property (nonatomic, weak) IBOutlet WLTerminalView *terminalView;
+@property (nonatomic, weak) IBOutlet NSTabView *tabBarView;
+
+
 
 // for Font size
 - (IBAction)increaseFontSize:(id)sender;

@@ -58,10 +58,10 @@
 - (void)setConnected:(BOOL)value {
     _connected = value;
     if (_connected) 
-        [self setIcon:[NSImage imageNamed:@"online.pdf"]];
+        self.icon = [NSImage imageNamed:@"online.pdf"];
     else {
         [self resetMessageCount];
-        [self setIcon:[NSImage imageNamed:@"offline.pdf"]];
+        self.icon = [NSImage imageNamed:@"offline.pdf"];
     }
 }
 
@@ -72,14 +72,14 @@
 #pragma mark -
 #pragma mark WLProtocol delegate methods
 - (void)protocolWillConnect:(id)protocol {
-    [self setIsProcessing:YES];
-    [self setConnected:NO];
-    [self setIcon:[NSImage imageNamed:@"waiting.pdf"]];
+    self.isProcessing = YES;
+    self.isConnected = NO;
+    self.icon = [NSImage imageNamed:@"waiting.pdf"];
 }
 
 - (void)protocolDidConnect:(id)protocol {
-    [self setIsProcessing:NO];
-    [self setConnected:YES];
+    self.isProcessing = NO;
+    self.isConnected = YES;
     [NSThread detachNewThreadSelector:@selector(login) toTarget:self withObject:nil];
     //[self login];
 }
@@ -251,6 +251,13 @@
 	[_messageDelegate connection:self
                didReceiveMessage:message
                       fromCaller:caller];
+}
+
+#pragma mark -
+#pragma mark MMTabBarItem
+
+- (BOOL)hasCloseButton {
+    return YES;
 }
 
 @end
