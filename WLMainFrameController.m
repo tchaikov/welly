@@ -16,6 +16,7 @@
 
 // Views
 #import "WLTabView.h"
+#import "WLTabViewItemController.h"
 
 // Panel Controllers
 #import "WLSitesPanelController.h"
@@ -174,9 +175,11 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
 - (void)antiIdle:(NSTimer *)timer {
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"AntiIdle"]) 
 		return;
-    NSArray *a = [_tabView tabViewItems];
-    for (NSTabViewItem *item in a) {
-        WLConnection *connection = [[item identifier] content];
+    for (NSTabViewItem *item in self.tabView.tabViewItems) {
+        id identifer = item.identifier;
+        if (![identifer isKindOfClass:[WLConnection class]])
+            continue;
+        WLConnection *connection = [identifer content];
         if ([connection isConnected] && [connection lastTouchDate] && [[NSDate date] timeIntervalSinceDate:[connection lastTouchDate]] >= 119) {
 //            unsigned char msg[] = {0x1B, 'O', 'A', 0x1B, 'O', 'B'};
             unsigned char msg[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
