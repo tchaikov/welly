@@ -78,20 +78,12 @@
 	// Then, do the expansion
 	[self setFont:YES];
 	
-	// Record new origin
-	
-	NSPoint newOP = {(screenRect.size.width - _originalFrame.size.width) / 2,
-                     (screenRect.size.height - _originalFrame.size.height) / 2};
-	
 	// Set the window style
 	[_mainWindow setOpaque:YES];
 	// Back up original bg color
 	_originalWindowBackgroundColor = [_mainWindow backgroundColor];
 	// Now set to bg color of the tab view to ensure consistency
 	[_mainWindow setBackgroundColor:[[WLGlobalConfig sharedInstance] colorBG]];
-	
-	// Move the origin point
-	[self.tabView setFrameOrigin:newOP];
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification {
@@ -103,10 +95,7 @@
     
 	// Set the size back
 	[self setFont:NO];
-	
 	[_mainWindow setOpaque:NO];
-	// Move view back
-    self.tabBarView.frame = _originalFrame;
 	[_mainWindow setBackgroundColor:_originalWindowBackgroundColor];
 }
 
