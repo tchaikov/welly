@@ -23,22 +23,22 @@
 
 + (NSDictionary *)sizeParametersForZoomRatio:(CGFloat)zoomRatio {
 	WLGlobalConfig *gConfig = [WLGlobalConfig sharedInstance];
-	return @{WLCellWidthKeyName:@(floor([gConfig cellWidth] * zoomRatio)), WLCellHeightKeyName:@(floor([gConfig cellHeight] * zoomRatio)), WLChineseFontSizeKeyName:@(floor([gConfig chineseFontSize] * zoomRatio)), WLEnglishFontSizeKeyName:@(floor([gConfig englishFontSize] * zoomRatio))};
+    return @{WLCellWidthKeyName:@(floor([gConfig cellWidth] * zoomRatio)),
+             WLCellHeightKeyName:@(floor([gConfig cellHeight] * zoomRatio)),
+             WLChineseFontSizeKeyName:@(floor([gConfig chineseFontSize] * zoomRatio)),
+             WLEnglishFontSizeKeyName:@(floor([gConfig englishFontSize] * zoomRatio))};
 }
 
 // Set and reset font size
-- (void)setFont:(BOOL)isEnteringFullScreen {
-	// In case of some stupid uses...
-	if (_screenRatio == 0.0f)
-		return;
+- (void)setFont:(CGFloat)zoomRatio {
 	WLGlobalConfig *gConfig = [WLGlobalConfig sharedInstance];
 	// Decide whether to set or to reset the font size
-	if (isEnteringFullScreen) {
+	if (zoomRatio) {
 		// Store old parameters
 		_originalSizeParameters = [[gConfig sizeParameters] copy];
 		
 		// And do it..
-		[gConfig setSizeParameters:[WLMainFrameController sizeParametersForZoomRatio:_screenRatio]];
+		[gConfig setSizeParameters:[WLMainFrameController sizeParametersForZoomRatio:zoomRatio]];
 	} else {
 		// Restore old parameters
 		[gConfig setSizeParameters:_originalSizeParameters];
@@ -66,17 +66,17 @@
     self.tabBarView.hidden = YES;
 		
 	// Back up the original frame of _targetView
-	_originalFrame = self.tabView.frame;
+	NSRect originalFrame = self.tabView.frame;
 	
 	// Get the fittest ratio for the expansion
 	NSRect screenRect = [[NSScreen mainScreen] frame];
+	CGFloat ratioH = screenRect.size.height / originalFrame.size.height;
+	CGFloat ratioW = screenRect.size.width / originalFrame.size.width;
+	CGFloat screenRatio = (ratioH > ratioW) ? ratioW : ratioH;
 	
-	CGFloat ratioH = screenRect.size.height / _originalFrame.size.height;
-	CGFloat ratioW = screenRect.size.width / _originalFrame.size.width;
-	_screenRatio = (ratioH > ratioW) ? ratioW : ratioH;
-	
+    NSLog(@"will enter %f %f", ratioH, ratioW);
 	// Then, do the expansion
-	[self setFont:YES];
+	[self setFont:screenRatio];
 	
 	// Set the window style
 	[_mainWindow setOpaque:YES];
@@ -87,20 +87,17 @@
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification {
-
 }
 
 - (void)windowWillExitFullScreen:(NSNotification *)notification {
     self.tabBarView.hidden = NO;
-    
 	// Set the size back
-	[self setFont:NO];
+	[self setFont:0];
 	[_mainWindow setOpaque:NO];
-	[_mainWindow setBackgroundColor:_originalWindowBackgroundColor];
+    [_mainWindow setBackgroundColor:_originalWindowBackgroundColor];
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification {
-	
 }
 
 @end

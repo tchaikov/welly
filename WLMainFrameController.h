@@ -62,7 +62,6 @@
 	
 	// 10.7 Full Screen
 	@private
-	NSRect _originalFrame;
 	CGFloat _screenRatio;
 	NSColor *_originalWindowBackgroundColor;
 	NSDictionary *_originalSizeParameters;

@@ -178,10 +178,12 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
         if (![identifer isKindOfClass:[WLConnection class]])
             continue;
         WLConnection *connection = identifer;
-        if ([connection isConnected] && [connection lastTouchDate] && [[NSDate date] timeIntervalSinceDate:[connection lastTouchDate]] >= 119) {
+        if (connection.isConnected &&
+            connection.lastTouchDate &&
+            [[NSDate date] timeIntervalSinceDate:connection.lastTouchDate] >= 119) {
 //            unsigned char msg[] = {0x1B, 'O', 'A', 0x1B, 'O', 'B'};
             unsigned char msg[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-            [connection sendBytes:msg length:6];
+            [connection sendBytes:msg length:sizeof(msg)];
         }
     }
 }
