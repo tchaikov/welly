@@ -292,7 +292,7 @@ static CGFloat widthCallback( void* ref ){
         .getWidth = widthCallback,
     };
     CTRunDelegateRef delegate = CTRunDelegateCreate(&callbacks, (void *)width);
-    return @{(NSString *)kCTRunDelegateAttributeName: (__bridge id)delegate,
+    return @{(NSString *)kCTRunDelegateAttributeName: CFBridgingRelease(delegate),
              name: @(TRUE)};
 }
 
