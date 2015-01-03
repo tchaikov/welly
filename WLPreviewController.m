@@ -153,14 +153,13 @@ static NSString * stringFromFileSize(long long size) {
                                          styleMask:style
                                            backing:NSBackingStoreBuffered 
                                              defer:NO];
-    [_window setFloatingPanel:YES];
-    [_window setDelegate:self];
-    [_window setOpaque:YES];
+    _window.floatingPanel = YES;
+    _window.delegate = self;
+    _window.opaque = YES;
     [_window center];
-    [_window setTitle:@"Loading..."];
-    [_window setViewsNeedDisplay:NO];
+    _window.title = @"Loading...";
+    _window.viewsNeedDisplay = NO;
     [_window makeKeyAndOrderFront:nil];
-	[[_window windowController] setDelegate:self];
 
     // Init progress bar
     _indicator = [[HMBlkProgressIndicator alloc] initWithFrame:NSMakeRect(10, 10, 380, 10)];
@@ -171,7 +170,8 @@ static NSString * stringFromFileSize(long long size) {
 #pragma mark -
 #pragma mark NSWindowDelegate protocol
 
-// Window delegate for _window, finallize the download 
+
+// Window delegate for _window, finalize the download
 - (BOOL)windowShouldClose:(id)window {
     NSURL *URL = [[_download request] URL];
     // Show the canceled message
@@ -245,7 +245,7 @@ static NSString * stringFromFileSize(long long size) {
 	// by gtCarrera @ 9#
 	NSString *fileType = [[_filename pathExtension] lowercaseString];
 	NSArray *allowedTypes = @[@"jpg", @"jpeg", @"bmp", @"png", @"gif", @"tiff", @"tif", @"pdf"];
-	Boolean canView = [allowedTypes containsObject:fileType];
+	BOOL canView = [allowedTypes containsObject:fileType];
 	if (!canView) {
 		// Close the progress bar window
 		[_window close];
