@@ -238,7 +238,7 @@
 		5ACEACEF1178D2CE0028E7BA /* WLPortalItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLPortalItem.h; sourceTree = "<group>"; };
 		5ACEACF01178D2CE0028E7BA /* WLPortalItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLPortalItem.m; sourceTree = "<group>"; };
 		5ACEAF35117DD1AB0028E7BA /* WLTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLTabView.h; sourceTree = "<group>"; };
-		5ACEAF36117DD1AB0028E7BA /* WLTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLTabView.m; sourceTree = "<group>"; };
+		5ACEAF36117DD1AB0028E7BA /* WLTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = WLTabView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5AD4B7130F2D8F8200BF2F87 /* WLClickEntryHotspotHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLClickEntryHotspotHandler.h; sourceTree = "<group>"; };
 		5AD4B7140F2D8F8200BF2F87 /* WLClickEntryHotspotHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLClickEntryHotspotHandler.m; sourceTree = "<group>"; };
 		5AD4B7150F2D8F8200BF2F87 /* WLMouseHotspotHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WLMouseHotspotHandler.h; sourceTree = "<group>"; wrapsLines = 1; };

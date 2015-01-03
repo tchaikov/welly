@@ -66,10 +66,10 @@
                                   backing:NSBackingStoreBuffered
                                     defer:YES];
     [self setWindow:window];
-    self.contentSubview = [[NSView alloc] initWithFrame:[[[self window] contentView] frame]];
+    self.contentSubview = [[NSView alloc] initWithFrame:[self.window.contentView frame]];
     [self.contentSubview setAutoresizingMask:(NSViewMinYMargin | NSViewWidthSizable)];
-    [[[self window] contentView] addSubview:self.contentSubview];
-    [[self window] setShowsToolbarButton:NO];
+    [[self.window contentView] addSubview:self.contentSubview];
+    [self.window setShowsToolbarButton:NO];
 }
 
 
@@ -135,21 +135,21 @@
         return;
     }
 
-    if([[self window] toolbar] == nil){
+    if(self.window.toolbar == nil){
         NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"DBPreferencesToolbar"];
         [toolbar setAllowsUserCustomization:NO];
         [toolbar setAutosavesConfiguration:NO];
         [toolbar setSizeMode:NSToolbarSizeModeDefault];
         [toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
         [toolbar setDelegate:(id<NSToolbarDelegate>)self];
-        [[self window] setToolbar:toolbar];
+        self.window.toolbar = toolbar;
     }
 
     NSString *firstIdentifier = (self.toolbarIdentifiers)[0];
-    [[[self window] toolbar] setSelectedItemIdentifier:firstIdentifier];
+    self.window.toolbar.selectedItemIdentifier = firstIdentifier;
     [self displayViewForIdentifier:firstIdentifier animate:NO];
 
-    [[self window] center];
+    [self.window center];
 
     [super showWindow:sender];
 }
@@ -216,7 +216,7 @@
     } else{
         [oldView removeFromSuperviewWithoutNeedingDisplay];
         newView.hidden = NO;
-        [[self window] setFrame:[self frameForView:newView] display:YES animate:animate];
+        [self.window setFrame:[self frameForView:newView] display:YES animate:animate];
     }
 
     self.window.title = identifier;
@@ -234,9 +234,9 @@
 - (void)crossFadeView:(NSView *)oldView withView:(NSView *)newView{
     [self.viewAnimation stopAnimation];
 
-    if([self shiftSlowsAnimation] && [[[self window] currentEvent] modifierFlags] & NSShiftKeyMask){
+    if ([self shiftSlowsAnimation] && [[self.window currentEvent] modifierFlags] & NSShiftKeyMask){
         [self.viewAnimation setDuration:1.25];
-    }else{
+    } else {
         [self.viewAnimation setDuration:0.25];
     }
 
@@ -249,8 +249,8 @@
      NSViewAnimationEffectKey: NSViewAnimationFadeInEffect};
 
     NSDictionary *resizeDictionary = 
-    @{NSViewAnimationTargetKey: [self window],
-     NSViewAnimationStartFrameKey: [NSValue valueWithRect:[[self window] frame]],
+    @{NSViewAnimationTargetKey: self.window,
+     NSViewAnimationStartFrameKey: [NSValue valueWithRect:[self.window frame]],
      NSViewAnimationEndFrameKey: [NSValue valueWithRect:[self frameForView:newView]]};
 
     NSArray *animationArray = 
@@ -281,18 +281,18 @@
 
     // This is a work-around that prevents the first
     // toolbar icon from becoming highlighted.
-    [[self window] makeFirstResponder:nil];
+    [self.window makeFirstResponder:nil];
 }
 
 // Calculate the window size for the new view.
 - (NSRect)frameForView:(NSView *)view{
-	NSRect windowFrame = [[self window] frame];
-	NSRect contentRect = [[self window] contentRectForFrameRect:windowFrame];
+	NSRect windowFrame = [self.window frame];
+	NSRect contentRect = [self.window contentRectForFrameRect:windowFrame];
 	float windowTitleAndToolbarHeight = NSHeight(windowFrame) - NSHeight(contentRect);
 
-	windowFrame.size.height = NSHeight([view frame]) + windowTitleAndToolbarHeight;
-	windowFrame.size.width = NSWidth([view frame]);
-	windowFrame.origin.y = NSMaxY([[self window] frame]) - NSHeight(windowFrame);
+	windowFrame.size.height = NSHeight(view.frame) + windowTitleAndToolbarHeight;
+	windowFrame.size.width = NSWidth(view.frame);
+	windowFrame.origin.y = NSMaxY(self.window.frame) - NSHeight(windowFrame);
 	
 	return windowFrame;
 }
@@ -300,9 +300,9 @@
 // Close the window with cmd+w incase the app doesn't have an app menu
 - (void)keyDown:(NSEvent *)theEvent{
     NSString *key = [theEvent charactersIgnoringModifiers];
-    if(([theEvent modifierFlags] & NSCommandKeyMask) && [key isEqualToString:@"w"]){
+    if (([theEvent modifierFlags] & NSCommandKeyMask) && [key isEqualToString:@"w"]) {
         [self close];
-    }else{
+    } else {
         [super keyDown:theEvent];
     }
 }

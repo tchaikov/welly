@@ -37,7 +37,7 @@ NSString *const WLCommandSequenceSameAuthorReading = @"\025";	// ^U
 	unsigned char cmd[_maxRow * _maxColumn + 1];
 	unsigned int cmdLength = 0;
 	WLTerminal *ds = [_view frontMostTerminal];
-	int cursorRow = [ds cursorRow];
+	int cursorRow = ds.cursorRow;
 	
 	// Moving Command
 	if (moveToRow > cursorRow) {
@@ -418,8 +418,8 @@ BOOL isPostTitleStarter(unichar c) {
 	
 	// In the same page, do NOT update/clear
 	WLTerminal *ds = [_view frontMostTerminal];
-	BBSState bbsState = [ds bbsState];
-	if (bbsState.state == [_manager lastBBSState].state && abs([_manager lastCursorRow] - [ds cursorRow]) == 1) {
+	BBSState bbsState = ds.bbsState;
+	if (bbsState.state == [_manager lastBBSState].state && abs([_manager lastCursorRow] - ds.cursorRow) == 1) {
 		return NO;
 	}
 	return YES;
@@ -434,15 +434,15 @@ BOOL isPostTitleStarter(unichar c) {
 	
 	// Update
 	WLTerminal *ds = [_view frontMostTerminal];
-	if ([ds bbsState].state == BBSBrowseBoard || [ds bbsState].state == BBSMailList) {
+	if (ds.bbsState.state == BBSBrowseBoard || ds.bbsState.state == BBSMailList) {
 		[self updatePostClickEntry];
-	} else if ([ds bbsState].state == BBSBoardList) {
+	} else if (ds.bbsState.state == BBSBoardList) {
 		[self updateBoardClickEntry];
-	} else if ([ds bbsState].state == BBSFriendList) {
+	} else if (ds.bbsState.state == BBSFriendList) {
 		[self updateFriendClickEntry];
-	} else if ([ds bbsState].state == BBSMainMenu || [ds bbsState].state == BBSMailMenu) {
+	} else if (ds.bbsState.state == BBSMainMenu || ds.bbsState.state == BBSMailMenu) {
 		[self updateMenuClickEntry];
-	} else if ([ds bbsState].state == BBSBrowseExcerption) {
+	} else if (ds.bbsState.state == BBSBrowseExcerption) {
 		[self updateExcerptionClickEntry];
 	}
 }

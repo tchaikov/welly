@@ -24,7 +24,7 @@
 
 @implementation WLEffectView
 - (id)initWithView:(WLTerminalView *)view {
-	self = [self initWithFrame:[view frame]];
+	self = [self initWithFrame:view.frame];
 	if (self) {
 		_mainView = view;
 		[self setWantsLayer:YES];

@@ -25,19 +25,20 @@
 	
     unsigned int _offset;
 	
-    cell **_grid;
     BOOL **_dirty;
 
 	NSMutableSet *_observers;
-    WLConnection *__weak _connection;
-	
+
+    unsigned _maxRow;
+    unsigned _maxColumn;
+
 	unichar *_textBuf;
 }
-@property unsigned int maxRow;
-@property unsigned int maxColumn;
+
 @property unsigned int cursorColumn;
 @property unsigned int cursorRow;
 @property cell **grid;
+
 @property (weak, setter=setConnection:, nonatomic) WLConnection *connection;
 @property (assign, readwrite) WLBBSType bbsType;
 @property (readonly) BBSState bbsState;

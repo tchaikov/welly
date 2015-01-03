@@ -64,7 +64,7 @@ NSString *const WLMenuTitleOpenWithBrowser = @"Open With Browser";
 }
 
 - (void)parse:(WLTerminal *)terminal {
-	_grid = [terminal grid];
+	_grid = terminal.grid;
 	_isReadingURL = NO;
 	const char *protocols[] = {"http://", "https://", "ftp://", "telnet://", "bbs://", "ssh://", "mailto:", "www."};
 	const int protocolNum = 8;

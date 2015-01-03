@@ -119,7 +119,7 @@ NSString *const WLMenuTitleAddAsFriend = @"Add %@ as friend";
 	WLTerminal *ds = [_view frontMostTerminal];
     cell *currRow = [ds cellsOfRow:r];
 	
-	if ([ds bbsState].state == BBSBrowseBoard || [ds bbsState].state == BBSMailList) {
+	if (ds.bbsState.state == BBSBrowseBoard || ds.bbsState.state == BBSMailList) {
         // browsing a board
 		// header/footer
 		if (r < 3 || r == _maxRow - 1)
@@ -180,8 +180,8 @@ NSString *const WLMenuTitleAddAsFriend = @"Add %@ as friend";
 	
 	// In the same page, do NOT update
 	WLTerminal *ds = [_view frontMostTerminal];
-	BBSState bbsState = [ds bbsState];
-	if (bbsState.state == [_manager lastBBSState].state && abs([_manager lastCursorRow] - [ds cursorRow]) == 1) {
+	BBSState bbsState = ds.bbsState;
+	if (bbsState.state == [_manager lastBBSState].state && abs([_manager lastCursorRow] - ds.cursorRow) == 1) {
 		return NO;
 	}
 	return YES;

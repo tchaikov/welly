@@ -22,7 +22,7 @@
 @class MultiClickRemoteBehavior;
 
 
-@interface WLMainFrameController : NSObject <MMTabBarViewDelegate, WLSitesObserver> {
+@interface WLMainFrameController : NSObject <MMTabBarViewDelegate, WLSitesObserver, NSWindowDelegate> {
     /* composeWindow */
     IBOutlet NSTextView *_composeText;
     IBOutlet NSPanel *_composeWindow;

@@ -75,8 +75,8 @@ NSString *const kWLRightCellTraitsAttributeName;
 }
 
 @property (readwrite, assign) int messageCount;
-@property (readwrite, assign) int row;
-@property (readwrite, assign) int column;
+@property (readonly) int row;
+@property (readonly) int column;
 @property (readwrite, assign) CGFloat cellWidth;
 @property (readwrite, assign) CGFloat cellHeight;
 @property (readwrite, assign, nonatomic) BOOL showsHiddenText;

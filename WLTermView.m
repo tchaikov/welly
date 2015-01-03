@@ -107,11 +107,11 @@ static NSImage *gLeftImage;
 - (void)refreshDisplay {
     [self.frontMostTerminal setAllDirty];
     [self updateBackedImage];
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 }
 
 - (void)refreshHiddenRegion {
-    if (![self isConnected])
+    if (!self.isConnected)
         return;
     for (int i = 0; i < _maxRow; i++) {
         cell *currRow = [self.frontMostTerminal cellsOfRow:i];
@@ -137,11 +137,11 @@ static NSImage *gLeftImage;
     [self updateBackedImage];
     WLTerminal *ds = self.frontMostTerminal;
 
-    if (ds && (_x != [ds cursorColumn] || _y != [ds cursorRow])) {
+    if (ds && (_x != ds.cursorColumn || _y != ds.cursorRow)) {
         [self setNeedsDisplayInRect:NSMakeRect(_x * _fontWidth, (_maxRow - 1 - _y) * _fontHeight, _fontWidth, _fontHeight)];
-        [self setNeedsDisplayInRect:NSMakeRect([ds cursorColumn] * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight, _fontWidth, _fontHeight)];
-        _x = [ds cursorColumn];
-        _y = [ds cursorRow];
+        [self setNeedsDisplayInRect:NSMakeRect(ds.cursorColumn * _fontWidth, (_maxRow - 1 - ds.cursorRow) * _fontHeight, _fontWidth, _fontHeight)];
+        _x = ds.cursorColumn;
+        _y = ds.cursorRow;
     }
 }
 
@@ -155,7 +155,7 @@ static NSImage *gLeftImage;
 
 - (void)drawRect:(NSRect)rect {
     WLTerminal *ds = self.frontMostTerminal;
-    if ([self isConnected]) {
+    if (self.isConnected) {
         // Modified by gtCarrera
         // Draw the background color first!!!
         [[gConfig colorBG] set];
@@ -193,10 +193,10 @@ static NSImage *gLeftImage;
         /* Draw the cursor */
         [[NSColor whiteColor] set];
         [NSBezierPath setDefaultLineWidth:2.0];
-        [NSBezierPath strokeLineFromPoint:NSMakePoint([ds cursorColumn] * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight + 1)
-                                  toPoint:NSMakePoint(([ds cursorColumn] + 1) * _fontWidth, (_maxRow - 1 - [ds cursorRow]) * _fontHeight + 1) ];
+        [NSBezierPath strokeLineFromPoint:NSMakePoint(ds.cursorColumn * _fontWidth, (_maxRow - 1 - ds.cursorRow) * _fontHeight + 1)
+                                  toPoint:NSMakePoint((ds.cursorColumn + 1) * _fontWidth, (_maxRow - 1 - ds.cursorRow) * _fontHeight + 1) ];
             [NSBezierPath setDefaultLineWidth:1.0];
-            _x = [ds cursorColumn], _y = [ds cursorRow];
+            _x = ds.cursorColumn, _y = ds.cursorRow;
 
             /* Draw the selection */
         //[self drawSelection];
@@ -211,14 +211,14 @@ static NSImage *gLeftImage;
     // TODO: use local variable to do this.
     [[WLGlobalConfig sharedInstance] updateBlinkTicker];
     if ([self hasBlinkCell])
-        [self setNeedsDisplay:YES];
+        self.needsDisplay = YES;
 }
 
 - (void)drawBlink {
     if (![gConfig blinkTicker])
         return;
 
-    id ds = [self frontMostTerminal];
+    id ds = self.frontMostTerminal;
     if (!ds)
         return;
 

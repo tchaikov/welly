@@ -66,26 +66,26 @@ static NSCursor *gMoveCursor = nil;
 	
 	unsigned char cmd[_maxRow * _maxColumn * 3];
 	unsigned int cmdLength = 0;
-	id ds = [_view frontMostTerminal];
+	WLTerminal *ds = [_view frontMostTerminal];
 	// FIXME: what actually matters is whether the user enables auto-break-line
 	// however, since it is enabled by default in smth (switchible by ctrl-p) and disabled in ptt,
 	// we temporarily use bbsType here...
-	if ([ds bbsType] == WLMaple) { // auto-break-line IS NOT enabled in bbs
+	if (ds.bbsType == WLMaple) { // auto-break-line IS NOT enabled in bbs
 		int moveToRow = _selectionLocation / _maxColumn;
 		int moveToCol = _selectionLocation % _maxColumn;
 		BOOL home = NO;
-		if (moveToRow > [ds cursorRow]) {
+		if (moveToRow > ds.cursorRow) {
 			cmd[cmdLength++] = 0x01;
 			home = YES;
-			for (int i = [ds cursorRow]; i < moveToRow; i++) {
+			for (int i = ds.cursorRow; i < moveToRow; i++) {
 				cmd[cmdLength++] = 0x1B;
 				cmd[cmdLength++] = 0x4F;
 				cmd[cmdLength++] = 0x42;
 			} 
-		} else if (moveToRow < [ds cursorRow]) {
+		} else if (moveToRow < ds.cursorRow) {
 			cmd[cmdLength++] = 0x01;
 			home = YES;
-			for (int i = [ds cursorRow]; i > moveToRow; i--) {
+			for (int i = ds.cursorRow; i > moveToRow; i--) {
 				cmd[cmdLength++] = 0x1B;
 				cmd[cmdLength++] = 0x4F;
 				cmd[cmdLength++] = 0x41;
@@ -101,16 +101,16 @@ static NSCursor *gMoveCursor = nil;
 					cmd[cmdLength++] = 0x43;                    
 				}
 			}
-		} else if (moveToCol > [ds cursorColumn]) {
-			for (int i = [ds cursorColumn]; i < moveToCol; i++) {
+		} else if (moveToCol > ds.cursorColumn) {
+			for (int i = ds.cursorColumn; i < moveToCol; i++) {
 				if (currRow[i].attr.f.doubleByte != 2 || [[[_view frontMostConnection] site] shouldDetectDoubleByte]) {
 					cmd[cmdLength++] = 0x1B;
 					cmd[cmdLength++] = 0x4F;
 					cmd[cmdLength++] = 0x43;
 				}
 			}
-		} else if (moveToCol < [ds cursorColumn]) {
-			for (int i = [ds cursorColumn]; i > moveToCol; i--) {
+		} else if (moveToCol < ds.cursorColumn) {
+			for (int i = ds.cursorColumn; i > moveToCol; i--) {
 				if (currRow[i].attr.f.doubleByte != 2 || [[[_view frontMostConnection] site] shouldDetectDoubleByte]) {
 					cmd[cmdLength++] = 0x1B;
 					cmd[cmdLength++] = 0x4F;
@@ -119,8 +119,8 @@ static NSCursor *gMoveCursor = nil;
 			}
 		}
 	} else { // auto-break-line IS enabled in bbs
-		int thisRow = [ds cursorRow];
-		int cursorLocation = thisRow * _maxColumn + [ds cursorColumn];
+		int thisRow = ds.cursorRow;
+		int cursorLocation = thisRow * _maxColumn + ds.cursorColumn;
 		int prevRow = -1;
 		int lastEffectiveChar = -1;
 		if (cursorLocation < _selectionLocation) {

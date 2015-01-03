@@ -184,7 +184,7 @@ NSString *const FBCommandSequenceEnterExcerption = @"x";
 		return;
 	
 	WLTerminal *ds = [_view frontMostTerminal];
-	BBSState bbsState = [ds bbsState];
+	BBSState bbsState = ds.bbsState;
 	
 	for (int x = 0; x < _maxColumn; ++x) {
         for (WLButtonDesc *desc in buttonsDefinition) {

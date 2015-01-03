@@ -19,11 +19,6 @@
 @end
 
 @implementation WLTerminal
-@synthesize maxRow = _maxRow;
-@synthesize maxColumn = _maxColumn;
-@synthesize cursorColumn = _cursorColumn;
-@synthesize cursorRow = _cursorRow;
-@synthesize grid = _grid;
 @synthesize bbsType = _bbsType;
 @synthesize bbsState = _bbsState;
 @synthesize connection = _connection;

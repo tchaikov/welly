@@ -57,7 +57,7 @@ const float xscale = 1, yscale = 0.8;
 
 - (void)awakeFromNib {
 	[self addSubview:_imageFlowView];
-	[[self window] makeFirstResponder:self];
+	[self.window makeFirstResponder:self];
 	// event hanlding
 	// Add self to _imageFlowView's next responder
 	NSResponder *next = [_imageFlowView nextResponder];

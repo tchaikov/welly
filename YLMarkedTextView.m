@@ -123,7 +123,7 @@
 			   value:[NSColor whiteColor]
 			   range:NSMakeRange(0, [value length])];
 	_string = as;
-	[self setNeedsDisplay:YES];
+	self.needsDisplay = YES;
 
 	CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)_string);
 	double w = CTLineGetTypographicBounds(line, NULL, NULL, NULL) ;
@@ -136,12 +136,12 @@
 
 - (void)setMarkedRange:(NSRange)value {
 	_markedRange = value;
-	[self setNeedsDisplay:YES];
+	self.needsDisplay = YES;
 }
 
 - (void)setSelectedRange:(NSRange)value {
 	_selectedRange = value;
-	[self setNeedsDisplay:YES];
+	self.needsDisplay = YES;
 }
 
 - (void)setDefaultFont:(NSFont *)value {
@@ -149,7 +149,7 @@
         _defaultFont = [value copy];
 		_lineHeight = [[NSLayoutManager new] defaultLineHeightForFont:_defaultFont];
     }
-	[self setNeedsDisplay:YES];
+	self.needsDisplay = YES;
 }
 
 - (BOOL)isOpaque {

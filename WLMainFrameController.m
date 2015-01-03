@@ -76,10 +76,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(WLMainFrameController);
     [[WLGlobalConfig sharedInstance] setCellWidth:[[WLGlobalConfig sharedInstance] cellWidth]];
 
     //[_mainWindow setHasShadow:YES];
-    [_mainWindow setOpaque:NO];
+    _mainWindow.opaque = NO;
+    _mainWindow.frameAutosaveName = @"wellyMainWindowFrame";
 
-    [_mainWindow setFrameAutosaveName:@"wellyMainWindowFrame"];
-        
     [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(antiIdle:) userInfo:nil repeats:YES];
     
 	[self initializeRemoteControl];
