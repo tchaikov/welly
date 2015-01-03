@@ -200,27 +200,30 @@
         }
     }
 
-    if(![newView isEqualTo:oldView]){
-        NSRect frame = [newView bounds];
-        frame.origin.y = NSHeight([self.contentSubview frame]) - NSHeight([newView bounds]);
-        [newView setFrame:frame];
-        [self.contentSubview addSubview:newView];
-        [[self window] setInitialFirstResponder:newView];
-
-        if(animate && [self crossFade]){
-            [self crossFadeView:oldView withView:newView];
-        }else{
-            [oldView removeFromSuperviewWithoutNeedingDisplay];
-            [newView setHidden:NO];
-            [[self window] setFrame:[self frameForView:newView] display:YES animate:animate];
-        }
-
-        [[self window] setTitle:[(self.toolbarItems)[identifier] label]];
+    if ([newView isEqualTo:oldView]) {
+        return;
     }
+
+    NSRect frame = [newView bounds];
+    frame.origin.y = NSHeight(self.contentSubview.frame) - NSHeight(newView.bounds);
+    newView.frame = frame;
+    [self.contentSubview addSubview:newView];
+    self.window.initialFirstResponder = newView;
+
+    if (animate && self.crossFade) {
+        NSAssert(oldView, @"do animate only when we have oldView");
+        [self crossFadeView:oldView withView:newView];
+    } else{
+        [oldView removeFromSuperviewWithoutNeedingDisplay];
+        newView.hidden = NO;
+        [[self window] setFrame:[self frameForView:newView] display:YES animate:animate];
+    }
+
+    self.window.title = identifier;
 }
 
 - (void)loadViewForIdentifier:(NSString *)identifier animate:(BOOL)animate {
-    [[[self window] toolbar] setSelectedItemIdentifier:identifier];
+    self.window.toolbar.selectedItemIdentifier = identifier;
     [self displayViewForIdentifier:identifier animate:animate];
 }
 
