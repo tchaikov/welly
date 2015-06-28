@@ -412,14 +412,14 @@ BOOL isPostTitleStarter(unichar c) {
 }
 
 - (BOOL)shouldUpdate {
-	if (![_view shouldEnableMouse] || ![_view isConnected]) {
+	if (!_view.shouldEnableMouse || !_view.isConnected) {
 		return YES;	
 	}
 	
 	// In the same page, do NOT update/clear
-	WLTerminal *ds = [_view frontMostTerminal];
-	BBSState bbsState = ds.bbsState;
-	if (bbsState.state == [_manager lastBBSState].state && abs([_manager lastCursorRow] - ds.cursorRow) == 1) {
+	WLTerminal *ds = _view.frontMostTerminal;
+	if (ds.bbsState.state == _manager.lastBBSState.state &&
+        _manager.lastCursorRow == ds.cursorRow + 1) {
 		return NO;
 	}
 	return YES;
