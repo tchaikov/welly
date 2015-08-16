@@ -101,7 +101,8 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		9425A6591A17BBA800359BED /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9425A6581A17BBA800359BED /* MMTabBarView.framework */; };
+		9437CE841B80F6B2009D7A72 /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9425A6371A17131A00359BED /* MMTabBarView.framework */; };
+		9437CE851B80F6B2009D7A72 /* MMTabBarView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9425A6371A17131A00359BED /* MMTabBarView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		945C31AE1775ED650032DEE0 /* DownloadItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 945C31AD1775ED650032DEE0 /* DownloadItem.m */; };
 		9473BF7417760F8E00D31AF5 /* WLTerminalView+QuickLook.m in Sources */ = {isa = PBXBuildFile; fileRef = 9473BF7317760F8E00D31AF5 /* WLTerminalView+QuickLook.m */; };
 		94FE02EB177B4DF1004BA304 /* WLPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FE02EA177B4DF1004BA304 /* WLPrefsWindowController.m */; };
@@ -119,6 +120,7 @@
 				D64A480E11E90356008ACEBD /* Growl.framework in CopyFiles */,
 				5A9C08230F5D8C320033B8E6 /* Sparkle.framework in CopyFiles */,
 				07B3708E0D6840BB0035E87D /* HMBlkAppKit.framework in CopyFiles */,
+				9437CE851B80F6B2009D7A72 /* MMTabBarView.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,7 +300,6 @@
 		85F7F2080B06EE36000C4CDF /* WLGlobalConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WLGlobalConfig.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9425A6371A17131A00359BED /* MMTabBarView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MMTabBarView.framework; sourceTree = "<group>"; };
-		9425A6581A17BBA800359BED /* MMTabBarView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MMTabBarView.framework; sourceTree = "<group>"; };
 		945C31AC1775ED650032DEE0 /* DownloadItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadItem.h; sourceTree = "<group>"; };
 		945C31AD1775ED650032DEE0 /* DownloadItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadItem.m; sourceTree = "<group>"; };
 		9473BF7217760F8E00D31AF5 /* WLTerminalView+QuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WLTerminalView+QuickLook.h"; sourceTree = "<group>"; };
@@ -319,7 +320,7 @@
 				5AB1BDBF0E18F26C0094C370 /* System.framework in Frameworks */,
 				5A38820C0E1D44E50098FA04 /* Foundation.framework in Frameworks */,
 				5A38820D0E1D44E60098FA04 /* AppKit.framework in Frameworks */,
-				9425A6591A17BBA800359BED /* MMTabBarView.framework in Frameworks */,
+				9437CE841B80F6B2009D7A72 /* MMTabBarView.framework in Frameworks */,
 				81624CE20E2F8F89009C9987 /* Carbon.framework in Frameworks */,
 				160D6D4B0EE2E5B900CDC416 /* Security.framework in Frameworks */,
 				5A9C07F90F5D8C2C0033B8E6 /* Sparkle.framework in Frameworks */,
@@ -363,7 +364,6 @@
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 				85D259460D21039D002BD294 /* IOKit.framework */,
 				5AB1BDBE0E18F26C0094C370 /* System.framework */,
-				9425A6581A17BBA800359BED /* MMTabBarView.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
