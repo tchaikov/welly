@@ -287,7 +287,7 @@
 			   (event.modifierFlags & NSAlternateKeyMask) == 0 &&
 			   (event.modifierFlags & NSControlKeyMask) &&
 			   (event.modifierFlags & NSShiftKeyMask) == 0 &&
-			   [event.characters characterAtIndex:0] == '\t') {
+			   [event.charactersIgnoringModifiers characterAtIndex:0] == '\t') {
 		[self selectNextTabViewItem:self];
 		return YES;
     } else if ((event.modifierFlags & NSCommandKeyMask) == 0 &&
